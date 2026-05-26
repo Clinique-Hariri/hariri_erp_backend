@@ -1,0 +1,12 @@
+{
+  "app-name": "Hariri",
+  "dashboard": "Tableau de bord",
+  "users-roles": "Utilisateurs & Rôles",
+  "roles-permissions": "Rôles & Permissions",
+  "users": "Utilisateurs",
+  "roles": "Rôles",
+  "permissions": "Permissions",
+  "general-management": "Gestion Générale",
+  "clinic-management": "Gestion de la Clinique",
+  "pharmacy-management": "Gestion de la Pharmacie"
+}

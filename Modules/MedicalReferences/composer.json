@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/medicalreferences",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\MedicalReferences\\": "app/",
+            "Modules\\MedicalReferences\\Database\\Factories\\": "database/factories/",
+            "Modules\\MedicalReferences\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\MedicalReferences\\Tests\\": "tests/"
+        }
+    }
+}

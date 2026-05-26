@@ -1,0 +1,48 @@
+# Node modules and compiled vendor stuff
+/node_modules
+/vendor
+
+# Laravel environment files
+.env
+.env.backup
+
+# Laravel test result cache
+.phpunit.result.cache
+
+# Laravel storage
+/storage/*.key
+/public/storage
+
+# Laravel Mix / Vite outputs
+/public/css
+/public/js
+/public/mix-manifest.json
+
+# Asset exceptions (keep specific assets)
+!/public/assets/
+!/public/assets/**/*
+/public/assets/js
+/public/assets/css
+/public/assets/vendor
+
+# IDE/editor config
+/.idea
+/.vscode
+
+# NPM/Yarn logs and lock files
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.log
+
+# Laravel/Vite hot reload file
+/public/hot
+
+# Docker and Homestead
+docker-compose.override.yml
+Homestead.json
+Homestead.yaml
+
+# Firebase credentials
+clinique-hariri-intl-firebase-adminsdk-fbsvc-9d33c19818.json
+public/clinique-hariri-intl-firebase-adminsdk-fbsvc-9d33c19818.json

@@ -1,0 +1,11 @@
+{
+    "name": "Actions",
+    "alias": "actions",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Actions\\Providers\\ActionsServiceProvider"
+    ],
+    "files": []
+}

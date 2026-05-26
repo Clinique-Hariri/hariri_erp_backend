@@ -1,0 +1,11 @@
+{
+    "Transactions": true,
+    "HRM": true,
+    "Supplier": true,
+    "Inventory": true,
+    "MedicalReferences": true,
+    "Clinic": true,
+    "Patients": true,
+    "Settings": true,
+    "Actions": true
+}

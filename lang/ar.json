@@ -1,0 +1,12 @@
+{
+  "app-name": "الحريري",
+  "dashboard": "لوحة التحكم",
+  "users-roles": "المستخدمين والأدوار",
+  "roles-permissions": "الصلاحيات  والأدوار",
+  "users": "المستخدمين",
+  "roles": "الأدوار",
+  "permissions": "الصلاحيات",
+  "general-management": "إدارة عامة",
+  "clinic-management": "إدارة العيادة",
+  "pharmacy-management": "إدارة الصيدلية"
+}
