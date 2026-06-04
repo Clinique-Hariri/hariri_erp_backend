@@ -60,7 +60,7 @@ return [
   'checkup_services.update.to_pending' => 'Changer le service en en attente',
   'checkup_services.update.to_in_progress' => 'Changer le service en en cours',
   'checkup_services.update.to_completed' => 'Changer le service en terminé',
-  'analyses.send_result_notification' => 'Envoyer la notification de resultat d analyses',
+  'checkup_services.send_result_notification' => 'Envoyer la notification de resultat d analyses',
 
   'checkup_radiology.view' => 'Voir les radiologies du visite',
   'checkup_radiology.create' => 'Créer une radiologie du visite',
