@@ -60,7 +60,7 @@ return [
   'checkup_services.update.to_pending' => 'Change service to pending',
   'checkup_services.update.to_in_progress' => 'Change service to in progress',
   'checkup_services.update.to_completed' => 'Change service to completed',
-  'analyses.send_result_notification' => 'Send analysis result notification',
+  'checkup_services.send_result_notification' => 'Send analysis result notification',
 
   'checkup_radiology.view' => 'View checkup radiology',
   'checkup_radiology.create' => 'Create checkup radiology',

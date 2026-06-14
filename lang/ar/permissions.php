@@ -60,7 +60,7 @@ return [
   'checkup_services.update.to_pending' => 'تغيير الخدمة إلى قيد الانتظار',
   'checkup_services.update.to_in_progress' => 'تغيير الخدمة إلى قيد التنفيذ',
   'checkup_services.update.to_completed' => 'تغيير الخدمة إلى مكتملة',
-  'analyses.send_result_notification' => 'ارسال اشعار نتيجة التحاليل',
+  'checkup_services.send_result_notification' => 'ارسال اشعار نتيجة التحاليل',
 
   'checkup_radiology.view' => 'عرض فحوصات الأشعة',
   'checkup_radiology.create' => 'إنشاء فحص أشعة',

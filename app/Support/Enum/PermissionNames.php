@@ -73,7 +73,7 @@ class PermissionNames
   public const string CHECKUP_SERVICES_UPDATE_TO_PENDING = 'checkup_services.update.to_pending';
   public const string CHECKUP_SERVICES_UPDATE_TO_IN_PROGRESS = 'checkup_services.update.to_in_progress';
   public const string CHECKUP_SERVICES_UPDATE_TO_COMPLETED = 'checkup_services.update.to_completed';
-  public const string ANALYSES_SEND_RESULT_NOTIFICATION = 'analyses.send_result_notification';
+  public const string ANALYSES_SEND_RESULT_NOTIFICATION = 'checkup_services.send_result_notification';
 
   public const string CHECKUP_RADIOLIGY_VIEW = 'checkup_radiology.view';
   public const string CHECKUP_RADIOLIGY_CREATE = 'checkup_radiology.create';
