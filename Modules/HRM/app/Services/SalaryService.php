@@ -123,7 +123,7 @@ class SalaryService
 
                 // Loan installments for the month; apply only if balance covers them, otherwise mark OVERDUE
                 $installments = LoanInstallment::whereDate('month', $targetStart->toDateString())
-                    ->whedailyWagere('status', '!=', InstallmentStatus::PAID)
+                    ->where('status', '!=', InstallmentStatus::PAID)
                     ->whereHas('loan', function ($q) use ($employee) {
                         $q->where('employee_id', $employee->id);
                     })
