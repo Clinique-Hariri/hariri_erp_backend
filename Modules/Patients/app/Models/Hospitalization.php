@@ -98,8 +98,8 @@ class Hospitalization extends Model
   public static function calculateHospitalizationPrice($stayLength): float|int
   {
     // Define your pricing logic here
-    $HOSPITALIZATION_DAILY_COST = Setting::where('key', SettingsKeys::HOSPITALIZATION_DAILY_COST)->value('value') ?? 100;
-    $HOSPITALIZATION_HOURLY_COST = Setting::where('key', SettingsKeys::HOSPITALIZATION_HOURLY_COST)->value('value') ?? 10;
+    $HOSPITALIZATION_DAILY_COST = Setting::where('key', SettingsKeys::HOSPITALIZATION_DAILY_COST)->value('value') ?? 0;
+    $HOSPITALIZATION_HOURLY_COST = Setting::where('key', SettingsKeys::HOSPITALIZATION_HOURLY_COST)->value('value') ?? 0;
     $days = intdiv($stayLength, 24);
     $hours = $stayLength % 24;
 
