@@ -266,8 +266,19 @@ class EmployeeController extends Controller
     $this->authorizePermission(PermissionNames::EMPLOYEES_DELETE);
 
     try {
-      $employee = Employee::findOrFail($id);
+      $employee = Employee::with('user')->findOrFail($id);
+
+      if ($employee->hasContractAt(now())) {
+        return $this->errorResponse(__('messages.cannot_delete_employee_with_active_contract'), 400);
+      }
+
+      DB::beginTransaction();
+
+      $this->deleteEmployeeRelations($employee);
+
       $employee->delete();
+
+      DB::commit();
 
       return $this->successResponse(
         data: [
@@ -275,6 +286,7 @@ class EmployeeController extends Controller
         ]
       );
     } catch (QueryException $e) {
+      DB::rollBack();
       // MySQL foreign key violation code = 23000
       if ($e->getCode() == 23000) {
         return response()->json([
@@ -289,7 +301,26 @@ class EmployeeController extends Controller
         'message' => 'Database error: ' . $e->getMessage()
       ], 500);
     } catch (Throwable $e) {
+      DB::rollBack();
       return $this->errorResponse($e->getMessage(), 500);
+    }
+  }
+
+  private function deleteEmployeeRelations(Employee $employee): void
+  {
+    // Delete all related records
+    $employee->contracts()->delete();
+    $employee->employeeBonuses()->delete();
+    $employee->careerChanges()->delete();
+    $employee->attendances()->delete();
+    $employee->loans()->delete();
+    $employee->salaries()->delete();
+    $employee->accountableTransactions()->delete();
+    $employee->clearMediaCollection(Employee::IMAGE);
+
+    // Delete the associated user if exists
+    if ($employee->user) {
+      $employee->user->delete();
     }
   }
 }

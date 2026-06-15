@@ -33,7 +33,21 @@ class EmployeeMultiController extends Controller
       try {
           DB::beginTransaction();
 
-          Employee::whereIn('id', $data['ids'])->delete();
+          $employees = Employee::with('user')->whereIn('id', $data['ids'])->get();
+
+          foreach ($employees as $employee) {
+              if ($employee->hasContractAt(now())) {
+                  DB::rollBack();
+                  return $this->errorResponse(
+                      __('messages.cannot_delete_employee_with_active_contract') . " ({$employee->fullname})",
+                      400
+                  );
+              }
+
+              $this->deleteEmployeeRelations($employee);
+
+              $employee->delete();
+          }
 
           DB::commit();
 
@@ -61,6 +75,24 @@ class EmployeeMultiController extends Controller
       } catch (Throwable $e) {
           DB::rollBack();
           return $this->errorResponse($e->getMessage(), 500);
+      }
+  }
+
+  private function deleteEmployeeRelations(Employee $employee): void
+  {
+      // Delete all related records
+      $employee->contracts()->delete();
+      $employee->employeeBonuses()->delete();
+      $employee->careerChanges()->delete();
+      $employee->attendances()->delete();
+      $employee->loans()->delete();
+      $employee->salaries()->delete();
+      $employee->accountableTransactions()->delete();
+      $employee->clearMediaCollection(Employee::IMAGE);
+
+      // Delete the associated user if exists
+      if ($employee->user) {
+          $employee->user->delete();
       }
   }
 }

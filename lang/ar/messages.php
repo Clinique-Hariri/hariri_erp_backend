@@ -31,6 +31,7 @@ return [
         'order_delivered' => 'تم توصيل طلبك رقم :order_id بنجاح.',
     ],
   'cannot_delete_record_linked_to_other_records' => 'لا يمكن حذف السجل المرتبط بسجلات أخرى.',
+  'cannot_delete_employee_with_active_contract' => 'لا يمكن حذف موظف لديه عقد نشط.',
   'doctor_already_has_pricing_for_this_insurance_society' => 'الطبيب لديه بالفعل تسعير لهذه الشركة التأمينية.',
   'the_selected_medical_service_already_has_a_pricing_for_this_insurance_society' => 'الخدمة الطبية المحددة لديها بالفعل تسعير لهذه الشركة التأمينية.',
 ];

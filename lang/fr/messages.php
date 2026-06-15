@@ -31,6 +31,7 @@ return [
         'order_delivered' => 'Votre commande :order_id a été livrée avec succès.',
     ],
   'cannot_delete_record_linked_to_other_records' => 'Impossible de supprimer un enregistrement lié à d\'autres enregistrements.',
+  'cannot_delete_employee_with_active_contract' => 'Impossible de supprimer un employé avec un contrat actif.',
   'doctor_already_has_pricing_for_this_insurance_society' => 'Le médecin a déjà un tarif pour cette société d\'assurance.',
   'the_selected_medical_service_already_has_a_pricing_for_this_insurance_society' => 'Le service médical sélectionné a déjà un tarif pour cette société d\'assurance.',
 ];

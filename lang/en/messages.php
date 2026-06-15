@@ -32,6 +32,7 @@ return [
     ],
 
   'cannot_delete_record_linked_to_other_records' => 'Cannot delete record linked to other records.',
+  'cannot_delete_employee_with_active_contract' => 'Cannot delete employee with an active contract.',
   'doctor_already_has_pricing_for_this_insurance_society' => 'Doctor already has pricing for this insurance society.',
   'the_selected_medical_service_already_has_a_pricing_for_this_insurance_society' => 'The selected medical service already has a pricing for this insurance society.',
 ];
