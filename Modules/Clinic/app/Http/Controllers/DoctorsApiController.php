@@ -28,7 +28,7 @@ class DoctorsApiController extends Controller
     }
 
     try {
-      $model = Doctor::whereHas('user.employee')->query()->with(['user.employee', 'speciality']);
+      $model = Doctor::whereHas('user.employee')->with(['user.employee', 'speciality']);
 
       if ($request->filled('search')) {
         $searchTerm = $request->search;
