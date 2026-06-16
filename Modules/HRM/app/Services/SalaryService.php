@@ -25,7 +25,7 @@ class SalaryService
     {
         $targetStart = $month
             ? Carbon::parse($month)->startOfMonth()
-            : now()->subMonth()->startOfMonth();
+            : now()->startOfMonth();
         $targetEnd = $targetStart->copy()->endOfMonth();
 
         $createdCount = 0;

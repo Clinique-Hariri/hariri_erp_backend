@@ -207,15 +207,75 @@ class CheckupAnalysesApiController extends Controller
     $data = $this->validateRequest($request, UpdateCheckupAnalysisRequest::rules());
 
     try {
-      $model = CheckupAnalysis::
-        where('checkup_id', $checkupId)
+      $model = CheckupAnalysis::with(['checkup.patient.insuranceSocietyBranch.insuranceSociety', 'services'])
+        ->where('checkup_id', $checkupId)
         ->where('id', $id)
         ->firstOrFail();
 
-      $model->update($data);
+      // Only allow service updates when status is draft
+      if ($model->status === CheckupAnalysisStatus::DRAFT && !empty($data['medical_services'])) {
+        DB::transaction(function () use ($model, $data) {
+          $checkup = $model->checkup;
+          $insurance_society_branch = $checkup->patient?->insuranceSocietyBranch;
+          $insurance_society = $insurance_society_branch?->insuranceSociety;
+
+          $serviceIds = collect($data['medical_services'])->pluck('id');
+
+          $medicalServices = MedicalService::whereIn('id', $serviceIds)->get();
+
+          $pricingMap = $insurance_society
+            ? $insurance_society->medicalServicePricings()
+              ->whereIn('medical_service_id', $serviceIds)
+              ->pluck('medical_service_price', 'medical_service_id')
+              ->toArray()
+            : [];
+
+          $services = [];
+          $total_services_price = 0;
+          $total_original_price = 0;
+
+          foreach ($medicalServices as $service) {
+            $originalPrice = $service->price;
+            $price = $pricingMap[$service->id] ?? $service->price;
+            $price = round($price, 2);
+
+            $services[] = [
+              'service' => $service,
+              'price'   => $price,
+            ];
+
+            $total_original_price += $originalPrice;
+            $total_services_price += $price;
+          }
+
+          $coverage_amount = insurance_coverage_amount($insurance_society_branch, $total_services_price);
+
+          $model->update([
+            'type'            => $services[0]['service']->type ?? $model->type,
+            'coverage_amount' => $coverage_amount,
+            'original_price'  => $total_original_price,
+            'total_price'     => $total_services_price - $coverage_amount,
+            'notes'           => $data['notes'] ?? $model->notes,
+            'orientation'     => $data['orientation'] ?? $model->orientation,
+          ]);
+
+          // Replace old services with new ones
+          $model->services()->delete();
+          foreach ($services as $service) {
+            $model->services()->create([
+              'medical_service_id' => $service['service']->id,
+              'service_price'      => $service['price'],
+            ]);
+          }
+        });
+
+        $model->refresh();
+      } else {
+        $model->update($data);
+      }
 
       return $this->successResponse(
-        data: new CheckupAnalysisResource($model)
+        data: new CheckupAnalysisResource($model->refresh())
       );
     } catch (Throwable $e) {
       return $this->errorResponse($e->getMessage(), 500);

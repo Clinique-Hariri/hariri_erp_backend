@@ -11,6 +11,8 @@ class UpdateCheckupAnalysisRequest extends FormRequest
     return [
       'notes' => ['nullable', 'string', 'max:1000'],
       'orientation' => ['nullable', 'string', 'max:1000'],
+      'medical_services' => ['nullable', 'array', 'min:1'],
+      'medical_services.*.id' => ['required', 'integer', 'exists:medical_services,id'],
     ];
   }
 
