@@ -36,6 +36,7 @@ return [
     'service_sid' => env('TWILIO_SERVICE_SID'),
     'whatsapp_from' => env('TWILIO_WHATSAPP_FROM', 'whatsapp:+14155238886'),
     'content_sid' => env('TWILIO_CONTENT_SID'),
+    'verify_ssl' => env('TWILIO_VERIFY_SSL', false),
   ],
   'firebase' => [
     'credentials' => env('FIREBASE_CREDENTIALS', base_path('clinique-hariri-intl-firebase-adminsdk-fbsvc-9d33c19818.json')),
