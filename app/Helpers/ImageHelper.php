@@ -15,8 +15,8 @@ if (!function_exists('storeWebPWithSpatie')) {
         }
 
         try {
-          $manager = new ImageManager(new GdDriver());
-          $webp = $manager->read($file->getRealPath())->encode(new WebpEncoder(quality: $quality));
+          $manager = ImageManager::usingDriver(GdDriver::class);
+          $webp = $manager->decode($file->getRealPath())->encode(new WebpEncoder(quality: $quality));
         } catch (\Exception $e) {
             return null;
         }
@@ -46,8 +46,8 @@ if (!function_exists('storeWebP')) {
         }
 
         try {
-          $manager = new ImageManager(new GdDriver());
-          $webp = $manager->read($file->getRealPath())->encode(new WebpEncoder(quality: $quality));
+          $manager = ImageManager::usingDriver(GdDriver::class);
+          $webp = $manager->decode($file->getRealPath())->encode(new WebpEncoder(quality: $quality));
         } catch (\Exception $e) {
             return null;
         }
