@@ -38,15 +38,14 @@ class SalaryController extends Controller
     try {
       $query = Salary::with(['employee', 'bonuses.bonus', 'deductions.loanInstallment', 'paymentAction.user']);
 
-      if ($request->filled('month')) {
-        $month = $request->input('month');
-        $targetStart = $month
-          ? Carbon::parse($month)->startOfMonth()
-          : now()->subMonth()->startOfMonth();
 
-        $query->whereYear('month', $targetStart->year)
-          ->whereMonth('month', $targetStart->month);
-      }
+      $month = $request->input('month');
+      $targetStart = $month
+        ? Carbon::parse($month)->startOfMonth()
+        : now()->startOfMonth();
+
+      $query->whereYear('month', $targetStart->year)
+        ->whereMonth('month', $targetStart->month);
 
 
       // Search by employee code or fullname
