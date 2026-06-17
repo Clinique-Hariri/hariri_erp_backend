@@ -35,18 +35,7 @@ class SalaryService
         $employees = Employee::whereHasContractAt($targetStart)->get();
 
         foreach ($employees as $employee) {
-            // Skip when salary already exists for this month
-            $exists = Salary::where('employee_id', $employee->id)
-                ->whereYear('month', $targetStart->year)
-                ->whereMonth('month', $targetStart->month)
-                ->exists();
-
-            if ($exists) {
-                $skippedCount++;
-                continue;
-            }
-
-            // Get the contract effective during the month
+            // Get the contract effective during the month; skip only if no contract
             $contract = $employee->contract($targetStart)->first();
             if (!$contract) {
                 $skippedCount++;
@@ -88,19 +77,27 @@ class SalaryService
                 &$totalBonuses,
                 &$createdCount
             ) {
-                $salary = Salary::create([
-                    'employee_id' => $employee->id,
-                    'month' => $targetStart->toDateString(),
-                    'basic_salary' => $basicSalary,
-                    'daily_wage' => $dailyWage,
-                    'total_bonuses' => 0,
-                    'total_deduction' => 0,
-                    'work_days' => $workDays,
-                    'absent_days' => $absentDays,
-                    'net_salary' => 0,
-                    'status' => SalaryStatus::DRAFT,
-                    'pay_date' => null,
-                ]);
+                $salary = Salary::updateOrCreate(
+                    [
+                        'employee_id' => $employee->id,
+                        'month' => $targetStart->toDateString(),
+                    ],
+                    [
+                        'basic_salary' => $basicSalary,
+                        'daily_wage' => $dailyWage,
+                        'total_bonuses' => 0,
+                        'total_deduction' => 0,
+                        'work_days' => $workDays,
+                        'absent_days' => $absentDays,
+                        'net_salary' => 0,
+                        'status' => SalaryStatus::DRAFT,
+                        'pay_date' => null,
+                    ]
+                );
+
+                // Clear existing bonuses and deductions when updating
+                $salary->bonuses()->delete();
+                $salary->deductions()->delete();
 
                 // Bonuses
                 foreach ($bonuses as $bonus) {

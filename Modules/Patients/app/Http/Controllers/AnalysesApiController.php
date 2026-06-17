@@ -9,6 +9,7 @@ use App\Traits\ApiResponseTrait;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Modules\Actions\Constants\ActionType;
 use Modules\Patients\Constants\CheckupAnalysisStatus;
@@ -484,36 +485,70 @@ class AnalysesApiController extends Controller
         return $this->errorResponse('Patient not found for this analysis.', 404);
       }
 
-      if (blank($patient->routeNotificationForMail()) && blank($patient->routeNotificationForWhatsApp()) && blank($patient->routeNotificationForSms())) {
+      $reportFilename = $analysis->checkup_analysis_number . '.pdf';
+
+      if ($request->hasFile('report')) {
+        $ftp = Storage::disk('ftp')->putFileAs('analyses', $request->file('report'), $reportFilename);
+      }
+
+      $pdfUrl = Storage::disk('ftp')->url('analyses/' . $reportFilename);
+
+      $date = optional($analysis->resultAction?->created_at)->format('Y-m-d') ?? now()->format('Y-m-d');
+      $reference = $analysis->checkup_analysis_number;
+      $contact = config('services.clinic.contact', '');
+
+      // Determine available channels for the patient
+      $availableChannels = [];
+      if (filled($patient->routeNotificationForMail())) {
+        $availableChannels[] = 'mail';
+      }
+      if (filled($patient->routeNotificationForWhatsApp())) {
+        $availableChannels[] = 'whatsapp';
+      }
+      if (filled($patient->routeNotificationForSms())) {
+        $availableChannels[] = 'sms';
+      }
+
+      if (empty($availableChannels)) {
         return $this->errorResponse('Patient has no email, WhatsApp number, or SMS number.', 422);
       }
 
-      if ($request->hasFile('report')) {
-        $analysis->clearMediaCollection(CheckupAnalysis::RESULT_ATTACHMENT);
-        $analysis->addMedia($request->file('report'))
-          ->toMediaCollection(CheckupAnalysis::RESULT_ATTACHMENT);
+      $errors = [];
+      $successCount = 0;
+
+      foreach ($availableChannels as $channel) {
+        try {
+          $patient->notify(new AnalysisResultNotification(
+            pdfUrl: $pdfUrl,
+            date: $date,
+            reference: $reference,
+            contact: $contact,
+            channels: [$channel],
+          ));
+
+          $successCount++;
+        } catch (Throwable $e) {
+          $errors[$channel] = $e->getMessage();
+        }
       }
 
-      $pdfUrl = $analysis->getFirstMediaUrl(CheckupAnalysis::RESULT_ATTACHMENT);
-      if (blank($pdfUrl)) {
-        return $this->errorResponse('Failed to store report attachment.', 500);
-      }
+      $totalChannels = count($availableChannels);
+      $message = match (true) {
+        $successCount === $totalChannels => 'success',
+        $successCount > 0 => 'partial success',
+        default => 'total failure',
+      };
 
-      $patient->notify(new AnalysisResultNotification(
-        pdfUrl: $pdfUrl,
-        date: optional($analysis->resultAction?->created_at)->format('Y-m-d') ?? now()->format('Y-m-d'),
-        reference: $analysis->checkup_analysis_number,
-        contact: config('services.clinic.contact', '')
-      ));
-
-      return $this->successResponse(
-        message: 'Analysis result notification sent successfully.',
-        data: [
+      return response()->json([
+        'status' => 1,
+        'message' => $message,
+        'errors' => $errors,
+        'data' => [
           'checkup_analysis_id' => $analysis->id,
           'patient_id' => $patient->id,
           'report_url' => $pdfUrl,
-        ]
-      );
+        ],
+      ]);
     } catch (Throwable $e) {
       return $this->errorResponse($e->getMessage(), 500);
     }

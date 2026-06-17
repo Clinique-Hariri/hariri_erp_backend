@@ -71,17 +71,13 @@ class AnalysisResultNotification extends Notification implements ShouldQueue
   public function toMail($notifiable): MailMessage
   {
     return (new MailMessage)
-      ->subject('Resultats d analyses disponibles')
-      ->line('Bonjour cher(e) patient(e),')
-      ->line('Bonne nouvelle ! Vos resultats d analyses sont maintenant disponibles.')
-      ->line('A la Clinique Hariri Internationale, votre sante reste notre priorite.')
-      ->line('Accedez a votre rapport en un clic :')
-      ->action('Voir le rapport', $this->pdfUrl)
-      ->line('Date des analyses : ' . $this->date)
-      ->line('Reference : ' . $this->reference)
-      ->line('Pour votre securite et un meilleur suivi, nous vous recommandons de consulter votre medecin avec ces resultats.')
-      ->line('Plus d infos : ' . $this->contact)
-      ->line('Merci pour votre confiance - Clinique Hariri Internationale.');
+      ->subject('Resultats d\'analyses disponibles')
+      ->view('emails.analysis-result', [
+        'pdfUrl' => $this->pdfUrl,
+        'date' => $this->date,
+        'reference' => $this->reference,
+        'contact' => $this->contact,
+      ]);
   }
 
   public function toSms($notifiable): string

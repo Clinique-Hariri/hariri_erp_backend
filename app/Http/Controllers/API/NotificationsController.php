@@ -83,41 +83,59 @@ class NotificationsController extends Controller
       'contact' => ['nullable', 'string', 'max:100'],
     ]);
 
-    try {
-      $channels = collect($data['channels'])->unique()->values()->all();
+    $channels = collect($data['channels'])->unique()->values()->all();
 
-      $routeMap = [
-        'mail' => 'mail',
-        'whatsapp' => 'whatsapp',
-        'sms' => 'sms',
-      ];
+    $routeMap = [
+      'mail' => 'mail',
+      'whatsapp' => 'whatsapp',
+      'sms' => 'sms',
+    ];
 
-      $routes = [];
-      foreach ($channels as $channel) {
-        $address = data_get($data, 'to.' . $channel);
-        if (blank($address)) {
-          return $this->errorResponse("Missing 'to.{$channel}' for selected channel '{$channel}'.", 422);
-        }
-        $routes[$routeMap[$channel]] = trim((string) $address);
+    $routes = [];
+    foreach ($channels as $channel) {
+      $address = data_get($data, 'to.' . $channel);
+      if (blank($address)) {
+        return $this->errorResponse("Missing 'to.{$channel}' for selected channel '{$channel}'.", 422);
       }
-
-      Notification::routes($routes)->notify(new AnalysisResultNotification(
-        pdfUrl: $data['pdf_url'] ?? 'https://example.com/test-report.pdf',
-        date: $data['date'] ?? now()->format('Y-m-d'),
-        reference: $data['reference'] ?? 'ANALYSIS-TEST-001',
-        contact: $data['contact'] ?? config('services.clinic.contact', ''),
-        channels: $channels,
-      ));
-
-      return $this->successResponse(
-        message: 'Test notification sent successfully.',
-        data: [
-          'channels' => $channels,
-          'to' => $routes,
-        ]
-      );
-    } catch (Exception $e) {
-      return $this->errorResponse($e->getMessage(), 500);
+      $routes[$routeMap[$channel]] = trim((string) $address);
     }
+
+    $errors = [];
+    $successCount = 0;
+
+    foreach ($channels as $channel) {
+      try {
+        Notification::routes([$routeMap[$channel] => $routes[$routeMap[$channel]]])->notify(
+          new AnalysisResultNotification(
+            pdfUrl: $data['pdf_url'] ?? 'https://example.com/test-report.pdf',
+            date: $data['date'] ?? now()->format('Y-m-d'),
+            reference: $data['reference'] ?? 'ANALYSIS-TEST-001',
+            contact: $data['contact'] ?? config('services.clinic.contact', ''),
+            channels: [$channel],
+          )
+        );
+
+        $successCount++;
+      } catch (Exception $e) {
+        $errors[$channel] = $e->getMessage();
+      }
+    }
+
+    $totalChannels = count($channels);
+    $message = match (true) {
+      $successCount === $totalChannels => 'success',
+      $successCount > 0 => 'partial success',
+      default => 'total failure',
+    };
+
+    return response()->json([
+      'status' => 1,
+      'message' => $message,
+      'errors' => $errors,
+      'data' => [
+        'channels' => $channels,
+        'to' => $routes,
+      ],
+    ]);
   }
 }

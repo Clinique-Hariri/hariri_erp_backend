@@ -17,6 +17,7 @@
     "laravel/framework": "^12.13",
     "laravel/sanctum": "^4.1",
     "laravel/tinker": "^2.9",
+    "league/flysystem-ftp": "^3.31",
     "mpdf/mpdf": "^8.2",
     "nwidart/laravel-modules": "^12.0",
     "simplesoftwareio/simple-qrcode": "^4.2",
