@@ -42,7 +42,7 @@ class TransactionsApiController extends Controller
         'transactionable' => function (MorphTo $morphTo) {
           $morphTo->morphWith([
             Checkup::class => ['patient.insuranceSocietyBranch', 'doctor.user', 'paymentAction.user'],
-            CheckupAnalysis::class => ['checkup.patient.insuranceSocietyBranch', 'checkup.doctor.user', 'paymentAction.user'],
+            CheckupAnalysis::class => ['checkup.patient.insuranceSocietyBranch', 'checkup.doctor.user', 'paymentAction.user', 'services'],
             Hospitalization::class => ['patient.insuranceSocietyBranch', 'doctor.user', 'paymentAction.user'],
             Operation::class => ['patient.insuranceSocietyBranch', 'surgeons.doctor.user', 'paymentAction.user'],
             Salary::class => ['employee.user'],
