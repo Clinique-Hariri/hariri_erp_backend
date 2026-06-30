@@ -156,68 +156,6 @@ class OperationApiController extends Controller
     }
   }
 
-  public function old_updateStatus(Request $request, $id)
-  {
-    $this->authorizePermission(PermissionNames::OPERATIONS_UPDATE);
-
-    $data = $this->validateRequest($request, UpdateOperationStatusRequest::rules());
-    $newStatus = $data['status'];
-
-    try {
-      match ($newStatus) {
-        OperationStatus::PENDING => $this->authorizePermission(PermissionNames::OPERATIONS_UPDATE_TO_PENDING),
-        OperationStatus::SCHEDULED => $this->authorizePermission(PermissionNames::OPERATIONS_UPDATE_TO_SCHEDULED),
-        OperationStatus::COMPLETED => $this->authorizePermission(PermissionNames::OPERATIONS_UPDATE_TO_COMPLETED),
-        default => throw new \InvalidArgumentException("Invalid status: {$newStatus}")
-      };
-
-      $model = Operation::with(['patient', 'surgeons.doctor.user.employee', 'paymentAction.user'])->findOrFail($id);
-
-      DB::transaction(function () use ($model, $newStatus) {
-        $model->update(['status' => $newStatus]);
-
-        if ($newStatus === OperationStatus::PENDING) {
-          // Record action
-          $model->actions()->create([
-            'action_type' => ActionType::OPERATION_PAYMENT_ACTION,
-            'from_status' => OperationStatus::DRAFT,
-            'to_status'   => OperationStatus::PENDING,
-            'user_id'     => auth()->id(),
-          ]);
-
-          $model->transactions()->create([
-            'amount' => $model->price,
-            'details' => "Operation payment for #{$model->operation_number} (Patient: {$model->patient->fullname})",
-            'type' => Type::CREDIT,
-            'status' => Status::COMPLETED,
-            'user_id' => auth()->id(),
-          ]);
-
-          foreach ($model->surgeons as $surgeon) {
-            $commission = ($surgeon->doctor_commission_percentage / 100) * $model->price;
-            $doctor = $surgeon->doctor;
-
-            $doctor->transactions()->create([
-              'amount' => $commission,
-              'details' => "Doctor commission for operation #{$model->operation_number} (Doctor: {$doctor->user->employee->fullname})",
-              'type' => Type::DEBIT,
-              'status' => Status::PENDING,
-              'user_id' => auth()->id(),
-            ]);
-          }
-        }
-      });
-
-      $model->load('paymentAction.user');
-
-      return $this->successResponse(
-        data: new OperationResource($model)
-      );
-    } catch (Throwable $e) {
-      return $this->errorResponse($e->getMessage(), 500);
-    }
-  }
-
   public function updateStatus(Request $request, $id)
   {
     $this->authorizePermission(PermissionNames::OPERATIONS_UPDATE);
