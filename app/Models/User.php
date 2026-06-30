@@ -84,11 +84,6 @@ class User extends Authenticatable implements HasMedia
 
   public function transactions(): MorphMany
   {
-    return $this->morphMany(Transaction::class, 'transactionable');
-  }
-
-  public function accountableTransactions(): MorphMany
-  {
     return $this->morphMany(Transaction::class, 'accountable');
   }
 

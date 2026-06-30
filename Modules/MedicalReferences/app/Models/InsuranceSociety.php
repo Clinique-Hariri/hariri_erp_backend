@@ -44,11 +44,6 @@ class InsuranceSociety extends Model
 
   public function transactions(): MorphMany
   {
-    return $this->morphMany(Transaction::class, 'transactionable');
-  }
-
-  public function accountableTransactions(): MorphMany
-  {
     return $this->morphMany(Transaction::class, 'accountable');
   }
 }

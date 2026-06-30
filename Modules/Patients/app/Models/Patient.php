@@ -61,7 +61,7 @@ class Patient extends Model
     return $this->hasMany(Hospitalization::class);
   }
 
-  public function accountableTransactions(): MorphMany
+  public function transactions(): MorphMany
   {
     return $this->morphMany(Transaction::class, 'accountable');
   }

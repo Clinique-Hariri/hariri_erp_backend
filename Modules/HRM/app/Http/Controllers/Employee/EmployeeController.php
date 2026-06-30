@@ -315,7 +315,7 @@ class EmployeeController extends Controller
     $employee->attendances()->delete();
     $employee->loans()->delete();
     $employee->salaries()->delete();
-    $employee->accountableTransactions()->delete();
+    $employee->transactions()->delete();
     $employee->clearMediaCollection(Employee::IMAGE);
 
     // Delete the associated user if exists
