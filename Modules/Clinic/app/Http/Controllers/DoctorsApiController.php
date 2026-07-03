@@ -172,50 +172,50 @@ class DoctorsApiController extends Controller
 
       //statistics per doctor
       foreach ($doctors as $doctor) {
-        $totalEarningsPerDoctor = $doctor->transactions()
+        $totalEarningsPerDoctor = (float) $doctor->transactions()
           ->where('status', Status::COMPLETED)
           ->sum('amount');
 
-        $unpaidEarningsPerDoctor = $doctor->transactions()
+        $unpaidEarningsPerDoctor = (float) $doctor->transactions()
           ->where('status', Status::PENDING)
           ->sum('amount');
 
-        $lastYearEarningsPerDoctor = $doctor->transactions()
+        $lastYearEarningsPerDoctor = (float) $doctor->transactions()
           ->whereBetween('created_at', [now()->subYear()->startOfYear(), now()->subYear()->endOfYear()])
           ->where('status', Status::COMPLETED)
           ->sum('amount');
 
-        $unpaidYearEarningsPerDoctor = $doctor->transactions()
+        $unpaidYearEarningsPerDoctor = (float) $doctor->transactions()
           ->whereBetween('created_at', [now()->subYear()->startOfYear(), now()->subYear()->endOfYear()])
           ->where('status', Status::PENDING)
           ->sum('amount');
 
-        $lastMonthEarningsPerDoctor = $doctor->transactions()
+        $lastMonthEarningsPerDoctor = (float) $doctor->transactions()
           ->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])
           ->where('status', Status::COMPLETED)
           ->sum('amount');
 
-        $unpaidMonthEarningsPerDoctor = $doctor->transactions()
+        $unpaidMonthEarningsPerDoctor = (float) $doctor->transactions()
           ->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])
           ->where('status', Status::PENDING)
           ->sum('amount');
 
-        $lastWeekEarningsPerDoctor = $doctor->transactions()
+        $lastWeekEarningsPerDoctor = (float) $doctor->transactions()
           ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
           ->where('status', Status::COMPLETED)
           ->sum('amount');
 
-        $unpaidWeekEarningsPerDoctor = $doctor->transactions()
+        $unpaidWeekEarningsPerDoctor = (float) $doctor->transactions()
           ->whereBetween('created_at', [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()])
           ->where('status', Status::PENDING)
           ->sum('amount');
 
-        $todayEarningsPerDoctor = $doctor->transactions()
+        $todayEarningsPerDoctor = (float) $doctor->transactions()
           ->whereDate('created_at', now()->toDateString())
           ->where('status', Status::COMPLETED)
           ->sum('amount');
 
-        $unpaidTodayEarningsPerDoctor = $doctor->transactions()
+        $unpaidTodayEarningsPerDoctor = (float) $doctor->transactions()
           ->whereDate('created_at', now()->toDateString())
           ->where('status', Status::PENDING)
           ->sum('amount');

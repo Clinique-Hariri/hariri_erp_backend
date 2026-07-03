@@ -187,9 +187,10 @@ class AnalysesApiController extends Controller
         ->firstOrFail();
 
       $insuranceSociety = $model->checkup->patient->insuranceSocietyBranch?->insuranceSociety;
+      $doctor = $model->checkup->doctor;
 
       if ($newStatus === CheckupAnalysisStatus::PENDING) {
-        DB::transaction(function () use ($model, $insuranceSociety, $newStatus) {
+        DB::transaction(function () use ($model, $insuranceSociety, $newStatus, $doctor) {
           $model->update(['status' => $newStatus]);
 
           $model->actions()->create([
@@ -219,6 +220,23 @@ class AnalysesApiController extends Controller
               'accountable_type' => $insuranceSociety::class,
               'accountable_id' => $insuranceSociety->id,
             ]);
+          }
+
+          $commissionPercentage = (float) data_get($doctor?->commission_percentages, 'analysis', 0);
+          if ($commissionPercentage > 0 && $model->original_price >= 0) {
+            $commissionAmount = round(($commissionPercentage / 100) * $model->original_price, 2);
+
+            if ($commissionAmount > 0) {
+              $model->transactions()->create([
+                'amount' => $commissionAmount,
+                'details' => "Doctor commission for checkup analysis #{$model->checkup_analysis_number} (Patient: {$model->checkup->patient->fullname})",
+                'type' => Type::DEBIT,
+                'status' => Status::PENDING,
+                'user_id' => auth()->id(),
+                'accountable_type' => $doctor::class,
+                'accountable_id' => $doctor->id,
+              ]);
+            }
           }
         });
       } elseif ($newStatus === CheckupAnalysisStatus::COMPLETED) {
