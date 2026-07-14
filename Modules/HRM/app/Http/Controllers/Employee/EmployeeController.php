@@ -18,10 +18,18 @@ use Modules\Clinic\Models\Doctor;
 use Modules\HRM\Http\Resources\EmployeeResource;
 use Modules\HRM\Http\Requests\Employee\StoreEmployeeRequest;
 use Modules\HRM\Http\Requests\Employee\UpdateEmployeeRequest;
+use Modules\HRM\Services\ContractService;
 
 class EmployeeController extends Controller
 {
   use ApiResponseTrait;
+
+  protected ContractService $contractService;
+
+  public function __construct(ContractService $contractService)
+  {
+    $this->contractService = $contractService;
+  }
 
   public function index(Request $request)
   {
@@ -165,7 +173,7 @@ class EmployeeController extends Controller
 
       // Create contract
       if ($request->input('create_contract', false)) {
-        Contract::create([
+        $this->contractService->create([
           'employee_id' => $employee->id,
           'department_id' => $employeeData['department_id'],
           'designation_id' => $employeeData['designation_id'],
@@ -247,6 +255,31 @@ class EmployeeController extends Controller
 
       if ($request->filled('insurance_society_ids') && $employee->user_id) {
         $employee->user->insuranceSocieties()->sync($employeeData['insurance_society_ids']);
+      }
+
+      // Handle contract update (correction path)
+      if ($request->boolean('create_contract')) {
+        $currentContract = $employee->contract;
+
+        if ($currentContract) {
+          $this->contractService->update($currentContract, [
+            'department_id' => $employeeData['department_id'] ?? $currentContract->department_id,
+            'designation_id' => $employeeData['designation_id'] ?? $currentContract->designation_id,
+            'start_date' => $employeeData['start_date'] ?? $currentContract->start_date,
+            'end_date' => $employeeData['end_date'] ?? $currentContract->end_date,
+            'basic_salary' => $employeeData['basic_salary'] ?? $currentContract->basic_salary,
+          ]);
+        } else {
+          // No current contract — create one
+          $this->contractService->create([
+            'employee_id' => $employee->id,
+            'department_id' => $employeeData['department_id'],
+            'designation_id' => $employeeData['designation_id'],
+            'start_date' => Carbon::parse($employeeData['hire_date'] ?? now())->startOfMonth(),
+            'end_date' => Carbon::parse($employeeData['end_date'])->endOfMonth(),
+            'basic_salary' => $employeeData['basic_salary'] ?? null,
+          ]);
+        }
       }
 
       DB::commit();

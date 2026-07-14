@@ -93,20 +93,20 @@ class SalaryController extends Controller
   }
 
   public function generate(Request $request)
-  {
-    $this->authorizePermission(PermissionNames::SALARIES_CREATE);
+    {
+        $this->authorizePermission(PermissionNames::SALARIES_CREATE);
 
-    try {
-      $summary = $this->salaryService->generate($request->input('month'));
+        try {
+            $summary = $this->salaryService->generateAll($request->input('month'));
 
-      return $this->successResponse(
-        message: 'Salaries generated successfully',
-        data: $summary
-      );
-    } catch (Throwable $e) {
-      return $this->errorResponse($e->getMessage(), 500);
+            return $this->successResponse(
+                message: 'Salaries generated successfully',
+                data: $summary
+            );
+        } catch (Throwable $e) {
+            return $this->errorResponse($e->getMessage(), 500);
+        }
     }
-  }
 
   public function updateStatus(Request $request, Salary $salary)
   {

@@ -90,6 +90,31 @@ class UpdateEmployeeRequest extends FormRequest
         'min:0',
         'max:100',
       ], */
+
+      // Optional contract update fields
+      'create_contract' => ['boolean'],
+      'department_id' => [
+        'required_if:create_contract,true',
+        'exists:departments,id',
+      ],
+      'designation_id' => [
+        'required_if:create_contract,true',
+        'exists:designations,id',
+      ],
+      'start_date' => [
+        'nullable',
+        'date',
+      ],
+      'end_date' => [
+        'nullable',
+        'date',
+        'after:start_date',
+      ],
+      'basic_salary' => [
+        'nullable',
+        'numeric',
+        'min:0',
+      ],
     ];
 
     // Add unique validation for email and phone if creating a user
