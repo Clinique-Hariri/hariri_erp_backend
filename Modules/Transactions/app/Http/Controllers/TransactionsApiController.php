@@ -37,6 +37,9 @@ class TransactionsApiController extends Controller
     }
 
     try {
+      $user = auth()->user();
+      $isAdminOrSuperAdmin = $user->hasRole(UserRoles::SUPER_ADMIN) || $user->hasRole(UserRoles::ADMIN);
+
       $model = Transaction::with([
         'user',
         'transactionable' => function (MorphTo $morphTo) {
@@ -56,6 +59,32 @@ class TransactionsApiController extends Controller
           ]);
         },
       ]);
+
+      if (!$isAdminOrSuperAdmin) {
+        $employee = $user->employee;
+        $doctor = $user->doctor;
+
+        $model->where(function ($query) use ($user, $employee, $doctor) {
+          // Transactions where user is creator
+          $query->where('user_id', $user->id);
+
+          // Transactions where user's employee is accountable
+          if ($employee) {
+            $query->orWhere(function ($q) use ($employee) {
+              $q->where('accountable_type', Employee::class)
+                ->where('accountable_id', $employee->id);
+            });
+          }
+
+          // Transactions where user's doctor is accountable
+          if ($doctor) {
+            $query->orWhere(function ($q) use ($doctor) {
+              $q->where('accountable_type', Doctor::class)
+                ->where('accountable_id', $doctor->id);
+            });
+          }
+        });
+      }
 
       if ($request->filled('type')) {
         $model->where('type', $request->type);
@@ -132,177 +161,44 @@ class TransactionsApiController extends Controller
     }
   }
 
-  public function old_index(Request $request)
-  {
-    if ($request->boolean('paginate')) {
-      $this->authorizePermission(PermissionNames::TRANSACTIONS_VIEW);
-    }
-
-    try {
-      $model = Transaction::with(['transactionable', 'user']);
-//        ->where('transactionable_id', null);
-
-      if ($request->filled('type')) {
-        $model->where('type', $request->type);
-      }
-
-      if ($request->filled('transactionable')) {
-        $map = [
-          'checkup' => 'Modules\Patients\Models\Checkup',
-          'analysis' => 'Modules\Patients\Models\CheckupAnalysis',
-          'hospitalization' => 'Modules\Patients\Models\Hospitalization',
-          'operation' => 'Modules\Patients\Models\Operation',
-          'doctor' => 'Modules\Clinic\Models\Doctor',
-          'other' => null,
-        ];
-
-        if (!array_key_exists($request->transactionable, $map)) {
-          return $this->errorResponse('Invalid transactionable type', 400);
-        }
-
-        $type = $map[$request->transactionable];
-
-        $model->when(
-          $type !== null,
-          fn($q) => $q->where('transactionable_type', $type),
-          fn($q) => $q->whereNull('transactionable_type')
-        );
-      }
-
-      if ($request->filled('created_at_from')) {
-        $model->whereDate('created_at', '>=', $request->created_at_from);
-      }
-
-      if ($request->filled('created_at_to')) {
-        $model->whereDate('created_at', '<=', $request->created_at_to);
-      }
-
-      if ($request->filled('search')) {
-        $search = $request->search;
-        $model->where(function ($q) use ($search) {
-          $q->where('transaction_number', 'like', "%$search%")
-            ->orWhere('details', 'like', "%$search%")
-            ->orWhereHas('user', function ($q2) use ($search) {
-              $q2->where('fullname', 'like', "%$search%")
-                ->orWhere('email', 'like', "%$search%");
-            });
-        });
-      }
-
-      $model->orderBy('created_at', 'desc');
-
-      if (request()->boolean('paginate')) {
-        $model = $model->paginate($request->get('per_page', 10));
-      } else {
-        $model = $model->get();
-      }
-
-      return $this->successResponse(
-        data: TransactionResource::collection($model)
-      );
-    } catch (Throwable $e) {
-      return $this->errorResponse($e->getMessage(), 500);
-    }
-  }
 
   public function show($id)
   {
     $this->authorizePermission(PermissionNames::TRANSACTIONS_VIEW);
 
     try {
-      $model = Transaction::with(['transactionable', 'user'])
-        ->findOrFail($id);
-
-      return $this->successResponse(
-        data: new TransactionResource($model)
-      );
-    } catch (Throwable $e) {
-      return $this->errorResponse($e->getMessage(), 500);
-    }
-  }
-
-  public function index_2(Request $request)
-  {
-    if ($request->boolean('paginate')) {
-      $this->authorizePermission(PermissionNames::TRANSACTIONS_VIEW);
-    }
-
-    try {
       $user = auth()->user();
-      $isInsuranceManager = (bool) $user?->hasRole(UserRoles::INSURANCE_SOCIETY_MANAGER);
+      $isAdminOrSuperAdmin = $user->hasRole(UserRoles::SUPER_ADMIN) || $user->hasRole(UserRoles::ADMIN);
 
-      $model = Transaction::with([
-        'user',
-        'transactionable' => function (MorphTo $morphTo) {
-          $morphTo->morphWith([
-            Checkup::class => ['patient.insuranceSocietyBranch.insuranceSociety'],
-            CheckupAnalysis::class => ['patient.insuranceSocietyBranch.insuranceSociety'],
-            Hospitalization::class => ['patient.insuranceSocietyBranch.insuranceSociety'],
-            Operation::class => ['patient.insuranceSocietyBranch.insuranceSociety'],
-          ]);
-        },
-      ]);
+      $query = Transaction::with(['transactionable', 'user']);
+      
+      if (!$isAdminOrSuperAdmin) {
+        $employee = $user->employee;
+        $doctor = $user->doctor;
 
-      if ($isInsuranceManager) {
-        $insuranceSocietyIds = $user->insuranceSocieties()->pluck('insurance_societies.id')->toArray();
-        $requestedInsuranceSocietyId = $request->filled('insurance_society_id')
-          ? (int) $request->insurance_society_id
-          : null;
+        $query->where(function ($q) use ($user, $employee, $doctor) {
+          $q->where('user_id', $user->id);
 
-        $model->whereHasMorph(
-          'transactionable',
-          [Checkup::class, CheckupAnalysis::class],
-          function ($query) use ($insuranceSocietyIds, $requestedInsuranceSocietyId) {
-            $applyInsuranceScope = function ($patientQuery) use ($insuranceSocietyIds, $requestedInsuranceSocietyId) {
-              $patientQuery->whereHas('insuranceSocietyBranch', function ($branchQuery) use ($insuranceSocietyIds, $requestedInsuranceSocietyId) {
-                $branchQuery->whereIn('insurance_society_id', $insuranceSocietyIds);
-
-                if ($requestedInsuranceSocietyId) {
-                  $branchQuery->where('insurance_society_id', $requestedInsuranceSocietyId);
-                }
-              });
-            };
-
-            $query->whereHas('patient', $applyInsuranceScope);
-          }
-        );
-      } else {
-        $model->whereHasMorph(
-          'transactionable',
-          [Checkup::class, CheckupAnalysis::class, Hospitalization::class, Operation::class]
-        );
-      }
-
-      if ($request->filled('created_at_from')) {
-        $model->whereDate('created_at', '>=', $request->created_at_from);
-      }
-
-      if ($request->filled('created_at_to')) {
-        $model->whereDate('created_at', '<=', $request->created_at_to);
-      }
-
-      if ($request->filled('search')) {
-        $search = $request->search;
-        $model->where(function ($q) use ($search) {
-          $q->where('transaction_number', 'like', "%$search%")
-            ->orWhere('details', 'like', "%$search%")
-            ->orWhereHas('user', function ($q2) use ($search) {
-              $q2->where('fullname', 'like', "%$search%")
-                ->orWhere('email', 'like', "%$search%");
+          if ($employee) {
+            $q->orWhere(function ($subq) use ($employee) {
+              $subq->where('accountable_type', Employee::class)
+                ->where('accountable_id', $employee->id);
             });
+          }
+
+          if ($doctor) {
+            $q->orWhere(function ($subq) use ($doctor) {
+              $subq->where('accountable_type', Doctor::class)
+                ->where('accountable_id', $doctor->id);
+            });
+          }
         });
       }
 
-      $model->orderBy('created_at', 'desc');
-
-      if ($request->boolean('paginate')) {
-        $model = $model->paginate($request->get('per_page', 10));
-      } else {
-        $model = $model->get();
-      }
+      $model = $query->findOrFail($id);
 
       return $this->successResponse(
-        data: PatientTransactionResource::collection($model)
+        data: new TransactionResource($model)
       );
     } catch (Throwable $e) {
       return $this->errorResponse($e->getMessage(), 500);
@@ -332,7 +228,6 @@ class TransactionsApiController extends Controller
       return $this->errorResponse($e->getMessage(), 500);
     }
   }
-
 
   public function update(Request $request, $id)
   {
