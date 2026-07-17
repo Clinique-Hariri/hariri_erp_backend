@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
+use Modules\HRM\Services\SalaryService;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
-Artisan::command('inspire', function () {
-  $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+Schedule::command('queue:work --stop-when-empty --tries=3 --max-time=50')
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->runInBackground();
+
+Schedule::call(function () {
+    app(SalaryService::class)->generateAll();
+})->everyMinute();

@@ -26,12 +26,12 @@ class SalaryService
         $targetStart = Carbon::parse($month)->startOfMonth();
         $targetEnd = $targetStart->copy()->endOfMonth();
 
-        // Skip if salary is already PAID
+        // Skip if salary is not DRAFT (already PROCESSED or PAID)
         $existing = Salary::where('employee_id', $employee->id)
             ->whereDate('month', $targetStart->toDateString())
             ->first();
 
-        if ($existing && $existing->status === SalaryStatus::PAID) {
+        if ($existing && $existing->status !== SalaryStatus::DRAFT) {
             return $existing;
         }
 

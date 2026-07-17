@@ -5,7 +5,6 @@ namespace Modules\HRM\Services;
 use Exception;
 use Carbon\Carbon;
 use Modules\HRM\Models\Contract;
-use Modules\HRM\Models\Employee;
 use Modules\HRM\Models\CareerChange;
 use Modules\HRM\Models\Salary;
 use Modules\HRM\Constants\SalaryStatus;
@@ -30,7 +29,14 @@ class ContractService
     {
         $this->validateDateOverlap($data['employee_id'], $data['start_date'], $data['end_date']);
 
-        return Contract::create($data);
+        $contract = Contract::create($data);
+
+        // Side effect: Generate draft salary if employee has an active contract now
+        if ($contract->employee->hasContractAt(now())) {
+            $this->salaryService->generate(now()->toDateString(), $contract->employee);
+        }
+
+        return $contract;
     }
 
     /**
@@ -74,15 +80,15 @@ class ContractService
             throw new Exception('Cannot edit contract: a pending career change is scheduled. Cancel or revert it first.');
         }
 
-        // Guard 3: Block basic_salary change if current month salary is already PAID
+        // Guard 3: Block basic_salary change if current month salary is not DRAFT (PROCESSED or PAID)
         if ($basicSalaryChanged) {
             $currentSalary = Salary::where('employee_id', $contract->employee_id)
                 ->whereMonth('month', now()->month)
                 ->whereYear('month', now()->year)
                 ->first();
 
-            if ($currentSalary && $currentSalary->status === SalaryStatus::PAID) {
-                throw new Exception('Cannot change basic salary: the current month salary is already paid.');
+            if ($currentSalary && $currentSalary->status !== SalaryStatus::DRAFT) {
+                throw new Exception('Cannot change basic salary: the current month salary is already processed or paid.');
             }
         }
 
@@ -90,7 +96,7 @@ class ContractService
         $contract->update($data);
 
         // Side effect: Regenerate current month salary on basic_salary change
-        if ($basicSalaryChanged && (!$currentSalary || $currentSalary->status !== SalaryStatus::PAID)) {
+        if ($basicSalaryChanged && (!$currentSalary || $currentSalary->status === SalaryStatus::DRAFT)) {
             $this->salaryService->generate(now()->toDateString(), $contract->employee);
         }
 
