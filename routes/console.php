@@ -21,4 +21,4 @@ Schedule::command('queue:work --stop-when-empty --tries=3 --max-time=50')
 
 Schedule::call(function () {
     app(SalaryService::class)->generateAll();
-})->everyMinute();
+})->dailyAt('00:00');
