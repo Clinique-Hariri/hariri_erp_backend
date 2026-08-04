@@ -36,13 +36,23 @@ class SalaryController extends Controller
     }
 
     try {
-      $query = Salary::with(['employee', 'bonuses.bonus', 'deductions.loanInstallment', 'paymentAction.user']);
-
-
       $month = $request->input('month');
       $targetStart = $month
         ? Carbon::parse($month)->startOfMonth()
         : now()->startOfMonth();
+      $targetEnd = $targetStart->copy()->endOfMonth();
+
+      $query = Salary::with(['employee', 'bonuses.bonus', 'deductions.loanInstallment', 'paymentAction.user'])
+        ->join('employees as sal_employees', 'sal_employees.id', '=', 'salaries.employee_id')
+        ->leftJoin('contracts as sal_contracts', function ($q) use ($targetStart, $targetEnd) {
+          $q->on('sal_contracts.employee_id', '=', 'sal_employees.id')
+            ->whereDate('sal_contracts.start_date', '<=', $targetEnd)
+            ->whereDate('sal_contracts.end_date', '>=', $targetStart);
+        })
+        ->leftJoin('departments as sal_departments', 'sal_departments.id', '=', 'sal_contracts.department_id')
+        ->select('salaries.*')
+        ->orderBy('sal_departments.name', 'ASC')
+        ->orderBy('sal_employees.fullname', 'ASC');
 
       $query->whereYear('month', $targetStart->year)
         ->whereMonth('month', $targetStart->month);
@@ -63,9 +73,9 @@ class SalaryController extends Controller
       }
 
       if ($request->boolean('paginate')) {
-        $salaries = $query->paginate($request->get('per_page', 10));
+        $salaries = $query->distinct()->paginate($request->get('per_page', 10));
       } else {
-        $salaries = $query->get();
+        $salaries = $query->distinct()->get();
       }
 
       return $this->successResponse(

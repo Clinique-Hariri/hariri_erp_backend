@@ -36,7 +36,15 @@ class AttendanceController extends Controller
 
     try {
 
-      $query = Employee::whereHasContractAt($request->date);
+      $attendanceDate = $request->filled('date') ? Carbon::parse($request->date) : now();
+
+      $query = Employee::whereHasContractAt($request->date)
+        ->leftJoin('contracts as att_contracts', function ($q) use ($attendanceDate) {
+          $q->on('att_contracts.employee_id', '=', 'employees.id')
+            ->whereDate('att_contracts.start_date', '<=', $attendanceDate)
+            ->whereDate('att_contracts.end_date', '>=', $attendanceDate);
+        })
+        ->leftJoin('departments as att_departments', 'att_departments.id', '=', 'att_contracts.department_id');
 
       if ($request->filled('search')) {
         $searchTerm = $request->search;
@@ -75,13 +83,13 @@ class AttendanceController extends Controller
         'attendances.duration',
         'attendances.created_at as attendance_created_at'
       )
-        ->orderBy('attendances.date', 'ASC')
-        ->orderBy('attendances.created_at', 'ASC');
+        ->orderBy('att_departments.name', 'ASC')
+        ->orderBy('employees.fullname', 'ASC');
 
       if ($request->boolean('paginate')) {
-        $attendances = $query->paginate($request->get('per_page', 10));
+        $attendances = $query->distinct()->paginate($request->get('per_page', 10));
       } else {
-        $attendances = $query->get();
+        $attendances = $query->distinct()->get();
       }
 
       //return $attendances;

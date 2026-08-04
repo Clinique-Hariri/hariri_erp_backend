@@ -38,7 +38,17 @@ class EmployeeController extends Controller
     }
 
     try {
-      $query = Employee::with(['user', 'contracts']);
+      $now = now();
+      $query = Employee::with(['user', 'contracts'])
+        ->leftJoin('contracts as emp_contracts', function ($q) use ($now) {
+          $q->on('emp_contracts.employee_id', '=', 'employees.id')
+            ->whereDate('emp_contracts.start_date', '<=', $now)
+            ->whereDate('emp_contracts.end_date', '>=', $now);
+        })
+        ->leftJoin('departments as emp_departments', 'emp_departments.id', '=', 'emp_contracts.department_id')
+        ->select('employees.*')
+        ->orderBy('emp_departments.name', 'ASC')
+        ->orderBy('employees.fullname', 'ASC');
 
       // Apply search filter
       if ($request->filled('search')) {
@@ -77,9 +87,9 @@ class EmployeeController extends Controller
       }
 
       if ($request->boolean('paginate')) {
-        $employees = $query->paginate($request->get('per_page', 10));
+        $employees = $query->distinct()->paginate($request->get('per_page', 10));
       } else {
-        $employees = $query->get();
+        $employees = $query->distinct()->get();
       }
 
       return $this->successResponse(
