@@ -46,8 +46,8 @@ class EmployeeController extends Controller
             ->whereDate('emp_contracts.end_date', '>=', $now);
         })
         ->leftJoin('departments as emp_departments', 'emp_departments.id', '=', 'emp_contracts.department_id')
-        ->select('employees.*')
-        ->orderBy('emp_departments.name', 'ASC')
+        ->select('employees.*', 'emp_departments.name as department_sort_name')
+        ->orderBy('department_sort_name', 'ASC')
         ->orderBy('employees.fullname', 'ASC');
 
       // Apply search filter

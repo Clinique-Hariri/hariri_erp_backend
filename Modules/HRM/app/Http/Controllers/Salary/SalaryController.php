@@ -50,9 +50,9 @@ class SalaryController extends Controller
             ->whereDate('sal_contracts.end_date', '>=', $targetStart);
         })
         ->leftJoin('departments as sal_departments', 'sal_departments.id', '=', 'sal_contracts.department_id')
-        ->select('salaries.*')
-        ->orderBy('sal_departments.name', 'ASC')
-        ->orderBy('sal_employees.fullname', 'ASC');
+        ->select('salaries.*', 'sal_departments.name as salary_department_sort_name', 'sal_employees.fullname as salary_employee_sort_name')
+        ->orderBy('salary_department_sort_name', 'ASC')
+        ->orderBy('salary_employee_sort_name', 'ASC');
 
       $query->whereYear('month', $targetStart->year)
         ->whereMonth('month', $targetStart->month);

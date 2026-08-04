@@ -81,9 +81,10 @@ class AttendanceController extends Controller
         'attendances.check_out_time',
         'attendances.status',
         'attendances.duration',
-        'attendances.created_at as attendance_created_at'
+        'attendances.created_at as attendance_created_at',
+        'att_departments.name as attendance_department_sort_name'
       )
-        ->orderBy('att_departments.name', 'ASC')
+        ->orderBy('attendance_department_sort_name', 'ASC')
         ->orderBy('employees.fullname', 'ASC');
 
       if ($request->boolean('paginate')) {
