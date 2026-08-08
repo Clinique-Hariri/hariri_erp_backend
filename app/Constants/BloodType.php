@@ -14,6 +14,7 @@ class BloodType
   const AB_NEGATIVE = 'AB-';
   const O_POSITIVE = 'O+';
   const O_NEGATIVE = 'O-';
+  const NOT_SPECIFIED = 'Not Specified';
 
   public static function all($translated = false): array
   {
@@ -48,22 +49,22 @@ class BloodType
     return collect(array_combine(self::all(), self::all()));
   }
 
-  public static function get(string $value): string
+  public static function get(string|null $value): string
   {
-    return self::collection()->get($value);
+    return $value ? self::collection()->get($value) : self::NOT_SPECIFIED;
   }
 
-  public static function get_name(string $value): string
+  public static function get_name(string|null $value): string
   {
-    return self::all(true)[$value];
+    return $value ? self::all(true)[$value] : __('app.blood_types.not_specified');
   }
 
-  public static function get_color(string $value): string
+  public static function get_color(string|null $value): string
   {
-    return self::colors()[$value];
+    return $value ? self::colors()[$value] : 'secondary';
   }
 
-  public static function get_resource(string $value):array
+  public static function get_resource(string|null $value):array
   {
     return [
       'value' => $value,
@@ -74,7 +75,7 @@ class BloodType
 
   public static function default(): string
   {
-    return self::A_NEGATIVE;
+    return self::NOT_SPECIFIED;
   }
 
 }
