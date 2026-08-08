@@ -21,7 +21,7 @@ class PatientResource extends JsonResource
       'patient_number' => $this->patient_number,
       'fullname' => $this->fullname,
       'gender' => Gender::get_resource($this->gender),
-      'blood_type' => BloodType::get_resource($this->blood_type),
+      'blood_type' => $this->blood_type ? BloodType::get_resource($this->blood_type) : null,
       'birthdate' => $this->birthdate?->format('Y-m-d'),
       'age' => $this->age,
       'birth_place' => $this->birth_place,
