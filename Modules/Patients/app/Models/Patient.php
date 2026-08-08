@@ -96,7 +96,14 @@ class Patient extends Model
   {
     $number = $this->whatsapp_number;
 
-    return filled($number) ? trim($number) : null;
+    if (filled($number)) {
+      $number = trim($number);
+      if (str_starts_with($number, '00')) {
+        $number = '+' . substr($number, 2);
+      }
+    }
+
+    return $number ?: null;
   }
 
   public function routeNotificationForSms(): ?string
