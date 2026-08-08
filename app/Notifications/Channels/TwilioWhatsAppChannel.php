@@ -22,13 +22,13 @@ class TwilioWhatsAppChannel
     $authToken = config('services.twilio.auth_token');
     $serviceSid = config('services.twilio.service_sid');
     $from = config('services.twilio.whatsapp_from');
-    $contentSid = config('services.twilio.content_sid');
+    
+    $messageData = $notification->toWhatsApp($notifiable);
+    $contentSid = $messageData['content_sid'] ?? null;
 
     if (blank($sid) || blank($authToken) || blank($contentSid) || (blank($serviceSid) && blank($from))) {
       return;
     }
-
-    $messageData = $notification->toWhatsApp($notifiable);
 
     $to = str_starts_with($to, 'whatsapp:') ? $to : 'whatsapp:' . $to;
 

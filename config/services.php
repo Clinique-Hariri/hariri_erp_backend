@@ -35,7 +35,10 @@ return [
     'auth_token' => env('TWILIO_AUTH_TOKEN'),
     'service_sid' => env('TWILIO_SERVICE_SID'),
     'whatsapp_from' => env('TWILIO_WHATSAPP_FROM', 'whatsapp:+14155238886'),
-    'content_sid' => env('TWILIO_CONTENT_SID'),
+    'content_sids' => [
+      'analysis_result' => env('TWILIO_CONTENT_SID_ANALYSIS_RESULT'),
+      'patient_welcome' => env('TWILIO_CONTENT_SID_PATIENT_WELCOME'),
+    ],
     'verify_ssl' => env('TWILIO_VERIFY_SSL', false),
   ],
   'firebase' => [

@@ -3,6 +3,7 @@
 namespace Modules\Patients\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\PatientWelcomeNotification;
 use App\Support\Enum\PermissionNames;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Database\QueryException;
@@ -107,6 +108,11 @@ class PatientsApiController extends Controller
       }
 
       $model = Patient::create($data);
+
+      $model->notify(new PatientWelcomeNotification(
+        patientName: $model->fullname,
+        patientNumber: $model->patient_number,
+      ));
 
       return $this->successResponse(
         data: new PatientResource($model)

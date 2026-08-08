@@ -59,6 +59,7 @@ class AnalysisResultNotification extends Notification implements ShouldQueue
   public function toWhatsApp($notifiable): array
   {
     return [
+      'content_sid' => config('services.twilio.content_sids.analysis_result'),
       'variables' => [
         'pdf' => $this->pdfUrl,
         'date' => $this->date,
