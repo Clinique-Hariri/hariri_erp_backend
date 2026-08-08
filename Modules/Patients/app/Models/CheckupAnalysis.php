@@ -24,6 +24,7 @@ class CheckupAnalysis extends Model implements HasMedia
     'checkup_analysis_number',
     'type',
     'coverage_amount',
+    'initial_price',
     'original_price',
     'total_price',
     'notes',
@@ -35,6 +36,7 @@ class CheckupAnalysis extends Model implements HasMedia
 
   protected $casts = [
     'coverage_amount' => 'decimal:2',
+    'initial_price' => 'decimal:2',
     'total_price' => 'decimal:2',
   ];
 

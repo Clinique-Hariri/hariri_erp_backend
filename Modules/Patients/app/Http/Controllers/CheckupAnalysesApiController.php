@@ -17,6 +17,8 @@ use Modules\Patients\Http\Requests\CheckupAnalysis\UpdateCheckupAnalysisStatusRe
 use Modules\Patients\Http\Resources\CheckupAnalysisResource;
 use Modules\Patients\Models\Checkup;
 use Modules\Patients\Models\CheckupAnalysis;
+use Modules\Settings\Constants\SettingsKeys;
+use Modules\Settings\Models\Setting;
 use Modules\Transactions\Constants\Status;
 use Modules\Transactions\Constants\Type;
 use Throwable;
@@ -170,12 +172,19 @@ class CheckupAnalysesApiController extends Controller
 
       $coverage_amount = insurance_coverage_amount($insurance_society_branch, $total_services_price);
 
-      $model = DB::transaction(function () use ($checkup, $data, $services, $coverage_amount, $total_services_price) {
+      // If setting enabled for insured patients, waive the patient's portion
+      $waiveAnalysis = $insurance_society_branch
+        && (bool) Setting::where('key', SettingsKeys::WAIVE_ANALYSIS_PAYMENTS)->value('value');
+      $initial_price = $total_services_price - $coverage_amount;
+      $total_price = $waiveAnalysis ? 0 : $initial_price;
+
+      $model = DB::transaction(function () use ($checkup, $data, $services, $coverage_amount, $initial_price, $total_price, $total_services_price) {
         $model = $checkup->checkupAnalyses()->create([
           'notes'            => $data['notes'] ?? null,
           'type'             => $services[0]['service']->type ?? null,
           'coverage_amount'  => $coverage_amount,
-          'total_price'      => $total_services_price - $coverage_amount,
+          'initial_price'    => $initial_price,
+          'total_price'      => $total_price,
           'original_price'   => $total_services_price,
         ]);
 
@@ -250,11 +259,18 @@ class CheckupAnalysesApiController extends Controller
 
           $coverage_amount = insurance_coverage_amount($insurance_society_branch, $total_services_price);
 
+          // If setting enabled for insured patients, waive the patient's portion
+          $waiveAnalysis = $insurance_society_branch
+            && (bool) Setting::where('key', SettingsKeys::WAIVE_ANALYSIS_PAYMENTS)->value('value');
+          $initial_price = $total_services_price - $coverage_amount;
+          $total_price = $waiveAnalysis ? 0 : $initial_price;
+
           $model->update([
             'type'            => $services[0]['service']->type ?? $model->type,
             'coverage_amount' => $coverage_amount,
+            'initial_price'   => $initial_price,
             'original_price'  => $total_original_price,
-            'total_price'     => $total_services_price - $coverage_amount,
+            'total_price'     => $total_price,
             'notes'           => $data['notes'] ?? $model->notes,
             'orientation'     => $data['orientation'] ?? $model->orientation,
           ]);

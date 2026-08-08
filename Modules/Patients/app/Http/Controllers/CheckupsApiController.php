@@ -19,6 +19,8 @@ use Modules\Patients\Models\Checkup;
 use Modules\Patients\Models\CheckupTicket;
 use Modules\Patients\Models\Patient;
 use Modules\Actions\Constants\ActionType;
+use Modules\Settings\Constants\SettingsKeys;
+use Modules\Settings\Models\Setting;
 use Modules\Transactions\Constants\Status;
 use Modules\Transactions\Constants\Type;
 use Modules\Transactions\Models\Transaction;
@@ -168,7 +170,12 @@ class CheckupsApiController extends Controller
 
       $data['coverage_amount'] = insurance_coverage_amount($insurance_society_branch, $checkup_price);
       $data['original_price'] = $doctor->checkup_price;
-      $data['total_price'] = $data['initial_price'] = $checkup_price - $data['coverage_amount'];
+      $data['initial_price'] = $checkup_price - $data['coverage_amount'];
+
+      // If setting enabled for insured patients, waive the patient's portion
+      $waiveCheckup = $insurance_society_branch
+        && (bool) Setting::where('key', SettingsKeys::WAIVE_CHECKUP_PAYMENTS)->value('value');
+      $data['total_price'] = $waiveCheckup ? 0 : $data['initial_price'];
 
       $model = DB::transaction(function () use($data){
         $model = Checkup::create($data);
@@ -243,15 +250,17 @@ class CheckupsApiController extends Controller
             'user_id'     => auth()->id(),
           ]);
 
-          $model->transactions()->create([
-            'amount'   => $model->total_price,
-            'details'  => "Checkup payment for #{$model->checkup_number} (Patient: {$model->patient->fullname})",
-            'type'     => Type::CREDIT,
-            'status'   => Status::COMPLETED,
-            'user_id'  => auth()->id(),
-            'accountable_type' => $model->patient::class,
-            'accountable_id' => $model->patient->id,
-          ]);
+          if ($model->total_price > 0) {
+            $model->transactions()->create([
+              'amount'   => $model->total_price,
+              'details'  => "Checkup payment for #{$model->checkup_number} (Patient: {$model->patient->fullname})",
+              'type'     => Type::CREDIT,
+              'status'   => Status::COMPLETED,
+              'user_id'  => auth()->id(),
+              'accountable_type' => $model->patient::class,
+              'accountable_id' => $model->patient->id,
+            ]);
+          }
 
           if ($insuranceSociety) {
             $model->transactions()->create([

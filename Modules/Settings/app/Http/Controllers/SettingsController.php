@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Support\Enum\PermissionNames;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
+use Modules\Settings\Constants\SettingsKeys;
 use Modules\Settings\Models\Setting;
 use Modules\Settings\Resources\SettingResource;
 use Throwable;
@@ -34,20 +35,21 @@ class SettingsController extends Controller
 
     $this->validateRequest($request, [
       'settings' => ['required', 'array'],
-      'settings.*.key' => ['required', 'string', 'exists:settings,key'],
+      'settings.*.key' => ['required', 'string', 'in:' . implode(',', SettingsKeys::all())],
       'settings.*.value' => ['required', 'string', 'max:255'],
     ]);
 
     $updatedSettings = [];
     try {
       foreach ($request->settings as $settingData) {
-        $setting = Setting::where('key', $settingData['key'])->first();
-        if ($setting) {
-          $setting->update([
-            'value' => $settingData['value'],
-          ]);
-          $updatedSettings[] = new SettingResource($setting);
-        }
+        $setting = Setting::updateOrCreate([
+          'key' => $settingData['key'],
+        ], [
+          'value' => $settingData['value'],
+        ]);
+        
+        $updatedSettings[] = new SettingResource($setting);
+        
       }
 
       return $this->successResponse(

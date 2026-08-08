@@ -22,6 +22,7 @@ class CheckupAnalysisResource extends JsonResource
       'checkup_analysis_number' => $this->checkup_analysis_number,
       'type' => MedicalServiceTypes::get_resource($this->type),
       'coverage_amount' => $this->coverage_amount,
+      'initial_price' => $this->initial_price,
       'total_price' => $this->total_price,
       'original_price' => $this->original_price,
       'notes' => $this->notes,

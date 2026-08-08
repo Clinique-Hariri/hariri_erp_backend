@@ -200,15 +200,17 @@ class AnalysesApiController extends Controller
             'user_id'     => auth()->id(),
           ]);
 
-          $model->transactions()->create([
-            'amount' => $model->total_price,
-            'details' => "Checkup Analysis payment for #{$model->checkup_analysis_number} (Patient: {$model->checkup->patient->fullname})",
-            'type' => Type::CREDIT,
-            'status' => Status::COMPLETED,
-            'user_id' => auth()->id(),
-            'accountable_type' => $model->checkup->patient::class,
-            'accountable_id' => $model->checkup->patient->id,
-          ]);
+          if ($model->total_price > 0) {
+            $model->transactions()->create([
+              'amount' => $model->total_price,
+              'details' => "Checkup Analysis payment for #{$model->checkup_analysis_number} (Patient: {$model->checkup->patient->fullname})",
+              'type' => Type::CREDIT,
+              'status' => Status::COMPLETED,
+              'user_id' => auth()->id(),
+              'accountable_type' => $model->checkup->patient::class,
+              'accountable_id' => $model->checkup->patient->id,
+            ]);
+          }
 
           if ($insuranceSociety) {
             $model->transactions()->create([
