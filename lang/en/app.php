@@ -128,6 +128,7 @@ return [
     'ab_negative' => 'AB-',
     'o_positive' => 'O+',
     'o_negative' => 'O-',
+    'not_specified' => 'Not Specified',
   ],
 
   //image
