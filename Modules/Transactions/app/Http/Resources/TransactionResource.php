@@ -24,6 +24,7 @@ use Modules\Patients\Models\Operation;
 use Modules\Patients\Models\Patient;
 use Modules\Transactions\Constants\Status;
 use Modules\Transactions\Constants\Type;
+use Modules\Transactions\Models\ExternalContact;
 use Modules\Transactions\Models\Transaction;
 
 /** @mixin Transaction */
@@ -60,6 +61,7 @@ class TransactionResource extends JsonResource
         Doctor::class => 'doctor',
         InsuranceSociety::class => 'insurance',
         Employee::class => 'employee',
+        ExternalContact::class => 'external_contact',
         default => null,
       },
       'transactionable' => match ($this->transactionable_type) {
@@ -75,6 +77,7 @@ class TransactionResource extends JsonResource
         Doctor::class => new DoctorResource($this->whenLoaded('accountable')),
         InsuranceSociety::class => new InsuranceSocietyResource($this->whenLoaded('accountable')),
         Employee::class => new EmployeeResource($this->whenLoaded('accountable')),
+        ExternalContact::class => new ExternalContactResource($this->whenLoaded('accountable')),
         default => null,
       },
     ];

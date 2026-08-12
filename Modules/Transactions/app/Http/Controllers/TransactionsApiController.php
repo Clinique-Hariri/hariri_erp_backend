@@ -23,6 +23,7 @@ use Modules\Transactions\Http\Resources\PatientTransactionResource;
 use Modules\Transactions\Http\Requests\Patient\StoreTransactionRequest;
 use Modules\Transactions\Http\Requests\Patient\UpdateTransactionsRequest;
 use Modules\Transactions\Http\Resources\TransactionResource;
+use Modules\Transactions\Models\ExternalContact;
 use Modules\Transactions\Models\Transaction;
 use Throwable;
 
@@ -116,6 +117,7 @@ class TransactionsApiController extends Controller
           'doctor' => Doctor::class,
           'insurance' => InsuranceSociety::class,
           'employee' => Employee::class,
+          'external_contact' => ExternalContact::class,
           'other' => null,
         ];
         $model->where('accountable_type', $map[$request->accountable_type] ?? null);
@@ -213,13 +215,23 @@ class TransactionsApiController extends Controller
     $data['user_id'] = auth()->id();
     $data['status'] = Status::COMPLETED;
     try {
+      $externalContact = ExternalContact::create([
+        'fullname' => $data['fullname'],
+        'phone' => $data['phone'] ?? null,
+      ]);
+
       $transaction = Transaction::create([
         'amount' => $data['amount'],
         'details' => $data['details'] ?? null,
         'type' => $data['type'],
         'status' => $data['status'],
+        'category' => $data['category'],
         'user_id' => $data['user_id'],
+        'accountable_type' => ExternalContact::class,
+        'accountable_id' => $externalContact->id,
       ]);
+
+      $transaction->load('accountable');
 
       return $this->successResponse(
         data: new TransactionResource($transaction)
@@ -241,6 +253,8 @@ class TransactionsApiController extends Controller
       if ($model->transactionable == null){
         $model->update($data);
       }
+
+      $model->load('accountable');
 
       return $this->successResponse(
         data: new TransactionResource($model)

@@ -16,6 +16,9 @@ class StoreTransactionRequest extends FormRequest
         'amount' => ['required', 'numeric', 'min:0'],
         'details' => ['nullable', 'string', 'max:255'],
         'type' => ['required', 'string', 'in:' . implode(',', \Modules\Transactions\Constants\Type::all())],
+        'category' => ['required', 'string', 'in:' . implode(',', \Modules\Transactions\Constants\TransactionCategory::external())],
+        'fullname' => ['required', 'string', 'max:255'],
+        'phone' => ['nullable', 'string', 'max:255'],
       ];
     }
 }

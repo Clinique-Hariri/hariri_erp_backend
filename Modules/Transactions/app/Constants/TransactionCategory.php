@@ -53,6 +53,15 @@ class TransactionCategory
     return self::MISC;
   }
 
+  public static function external(): array
+  {
+    return [
+      self::ANALYSIS,
+      self::RADIOLOGY,
+      self::MISC,
+    ];
+  }
+
   public static function get_resource(string $category): array
   {
     return [
