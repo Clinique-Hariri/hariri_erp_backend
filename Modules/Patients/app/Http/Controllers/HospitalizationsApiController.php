@@ -19,6 +19,7 @@ use Modules\Patients\Models\Hospitalization;
 use Modules\Settings\Constants\SettingsKeys;
 use Modules\Settings\Models\Setting;
 use Modules\Transactions\Constants\Status;
+use Modules\Transactions\Constants\TransactionCategory;
 use Modules\Transactions\Constants\Type;
 use Throwable;
 
@@ -224,6 +225,7 @@ class HospitalizationsApiController extends Controller
               'details' => "Initial hospitalization payment for #{$model->hospitalization_number} (Patient: {$model->patient->fullname})",
               'type'    => Type::CREDIT,
               'status'  => Status::COMPLETED,
+              'category' => TransactionCategory::HOSPITALIZATION,
               'user_id' => auth()->id(),
               'accountable_type' => $model->patient::class,
               'accountable_id' => $model->patient->id,
@@ -240,6 +242,7 @@ class HospitalizationsApiController extends Controller
                 'details' => "Doctor commission for hospitalization #{$model->hospitalization_number} (Patient: {$model->patient->fullname})",
                 'type'    => Type::DEBIT,
                 'status'  => Status::PENDING,
+                'category' => TransactionCategory::COMMISSION,
                 'user_id' => auth()->id(),
                 'accountable_type' => $model->doctor::class,
                 'accountable_id' => $model->doctor->id,
@@ -293,6 +296,7 @@ class HospitalizationsApiController extends Controller
               'details' => "Final hospitalization payment for #{$model->hospitalization_number} (Patient: {$model->patient->fullname})",
               'type'    => Type::CREDIT,
               'status'  => Status::COMPLETED,
+              'category' => TransactionCategory::HOSPITALIZATION_EXTENSION,
               'user_id' => auth()->id(),
               'accountable_type' => $model->patient::class,
               'accountable_id' => $model->patient->id,
@@ -308,6 +312,7 @@ class HospitalizationsApiController extends Controller
                   'details' => "Doctor extension commission for hospitalization #{$model->hospitalization_number} (Patient: {$model->patient->fullname})",
                   'type'    => Type::DEBIT,
                   'status'  => Status::PENDING,
+                  'category' => TransactionCategory::COMMISSION,
                   'user_id' => auth()->id(),
                   'accountable_type' => $model->doctor::class,
                   'accountable_id' => $model->doctor->id,

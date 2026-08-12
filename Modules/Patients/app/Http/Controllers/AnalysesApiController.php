@@ -12,12 +12,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Modules\Actions\Constants\ActionType;
+use Modules\MedicalReferences\Constants\MedicalServiceTypes;
 use Modules\Patients\Constants\CheckupAnalysisStatus;
 use Modules\Patients\Http\Requests\CheckupAnalysis\SendAnalysisResultNotificationRequest;
 use Modules\Patients\Http\Requests\CheckupAnalysis\UpdateCheckupAnalysisStatusRequest;
 use Modules\Patients\Http\Resources\CheckupAnalysisResource;
 use Modules\Patients\Models\CheckupAnalysis;
 use Modules\Transactions\Constants\Status;
+use Modules\Transactions\Constants\TransactionCategory;
 use Modules\Transactions\Constants\Type;
 use Throwable;
 
@@ -206,6 +208,7 @@ class AnalysesApiController extends Controller
               'details' => "Checkup Analysis payment for #{$model->checkup_analysis_number} (Patient: {$model->checkup->patient->fullname})",
               'type' => Type::CREDIT,
               'status' => Status::COMPLETED,
+              'category' => $model->type === MedicalServiceTypes::RADIOLOGY ? TransactionCategory::RADIOLOGY : TransactionCategory::ANALYSIS,
               'user_id' => auth()->id(),
               'accountable_type' => $model->checkup->patient::class,
               'accountable_id' => $model->checkup->patient->id,
@@ -218,6 +221,7 @@ class AnalysesApiController extends Controller
               'details' => "Insurance coverage for checkup service #{$model->checkup_analysis_number} (Patient: {$model->checkup->patient->fullname})",
               'type' => Type::CREDIT,
               'status' => Status::PENDING,
+              'category' => TransactionCategory::INSURANCE_COVERAGE,
               'user_id' => auth()->id(),
               'accountable_type' => $insuranceSociety::class,
               'accountable_id' => $insuranceSociety->id,
@@ -234,6 +238,7 @@ class AnalysesApiController extends Controller
                 'details' => "Doctor commission for checkup analysis #{$model->checkup_analysis_number} (Patient: {$model->checkup->patient->fullname})",
                 'type' => Type::DEBIT,
                 'status' => Status::PENDING,
+                'category' => TransactionCategory::COMMISSION,
                 'user_id' => auth()->id(),
                 'accountable_type' => $doctor::class,
                 'accountable_id' => $doctor->id,

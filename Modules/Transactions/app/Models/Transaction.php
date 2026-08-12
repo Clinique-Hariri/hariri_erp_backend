@@ -19,7 +19,10 @@ class Transaction extends Model
     'details',
     'type',
     'status',
+    'category',
     'user_id',
+    'transactionable_type',
+    'transactionable_id',
     'accountable_type',
     'accountable_id',
   ];

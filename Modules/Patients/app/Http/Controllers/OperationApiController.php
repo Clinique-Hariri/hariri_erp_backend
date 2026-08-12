@@ -16,6 +16,7 @@ use Modules\Patients\Http\Requests\Operation\UpdateOperationStatusRequest;
 use Modules\Patients\Http\Resources\OperationResource;
 use Modules\Patients\Models\Operation;
 use Modules\Transactions\Constants\Status;
+use Modules\Transactions\Constants\TransactionCategory;
 use Modules\Transactions\Constants\Type;
 use Throwable;
 
@@ -189,6 +190,7 @@ class OperationApiController extends Controller
             'details' => "Operation payment for #{$model->operation_number} (Patient: {$model->patient->fullname})",
             'type' => Type::CREDIT,
             'status' => Status::COMPLETED,
+            'category' => TransactionCategory::OPERATION,
             'user_id' => auth()->id(),
             'accountable_type' => $model->patient::class,
             'accountable_id' => $model->patient->id,
@@ -206,6 +208,7 @@ class OperationApiController extends Controller
                 'details' => "Doctor commission for operation #{$model->operation_number} (Doctor: {$doctorName})",
                 'type' => Type::DEBIT,
                 'status' => Status::PENDING,
+                'category' => TransactionCategory::COMMISSION,
                 'user_id' => auth()->id(),
                 'accountable_type' => $doctor::class,
                 'accountable_id' => $doctor->id,

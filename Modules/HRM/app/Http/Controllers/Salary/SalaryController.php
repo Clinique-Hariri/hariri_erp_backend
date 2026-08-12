@@ -17,6 +17,7 @@ use Modules\HRM\Services\SalaryService;
 use Modules\HRM\Constants\SalaryStatus;
 use Modules\HRM\Services\SalaryReportService;
 use Modules\Transactions\Constants\Status;
+use Modules\Transactions\Constants\TransactionCategory;
 use Modules\Transactions\Constants\Type;
 
 class SalaryController extends Controller
@@ -179,6 +180,7 @@ class SalaryController extends Controller
             'details' => "Salary payment for {$employeeName} ({$monthLabel})",
             'type' => Type::DEBIT,
             'status' => Status::COMPLETED,
+            'category' => TransactionCategory::SALARY,
             'user_id' => auth()->id(),
             'accountable_type' => $employee::class,
             'accountable_id' => $employee->id,

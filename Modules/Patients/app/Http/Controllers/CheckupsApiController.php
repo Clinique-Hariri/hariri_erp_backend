@@ -22,6 +22,7 @@ use Modules\Actions\Constants\ActionType;
 use Modules\Settings\Constants\SettingsKeys;
 use Modules\Settings\Models\Setting;
 use Modules\Transactions\Constants\Status;
+use Modules\Transactions\Constants\TransactionCategory;
 use Modules\Transactions\Constants\Type;
 use Modules\Transactions\Models\Transaction;
 use Throwable;
@@ -256,6 +257,7 @@ class CheckupsApiController extends Controller
               'details'  => "Checkup payment for #{$model->checkup_number} (Patient: {$model->patient->fullname})",
               'type'     => Type::CREDIT,
               'status'   => Status::COMPLETED,
+              'category' => TransactionCategory::CHECKUP,
               'user_id'  => auth()->id(),
               'accountable_type' => $model->patient::class,
               'accountable_id' => $model->patient->id,
@@ -268,6 +270,7 @@ class CheckupsApiController extends Controller
               'details'  => "Insurance coverage for checkup #{$model->checkup_number} (Patient: {$model->patient->fullname})",
               'type'     => Type::CREDIT,
               'status'   => Status::PENDING,
+              'category' => TransactionCategory::INSURANCE_COVERAGE,
               'user_id'  => auth()->id(),
               'accountable_type' => $insuranceSociety::class,
               'accountable_id' => $insuranceSociety->id,
@@ -283,6 +286,7 @@ class CheckupsApiController extends Controller
                 'details'  => "Commission for checkup #{$model->checkup_number} (Patient: {$model->patient->fullname})",
                 'type'     => Type::DEBIT,
                 'status'   => Status::PENDING,
+                'category' => TransactionCategory::COMMISSION,
                 'user_id'  => auth()->id(),
                 'accountable_type' => $doctor::class,
                 'accountable_id' => $doctor->id,
