@@ -23,6 +23,7 @@ use Modules\Patients\Models\Hospitalization;
 use Modules\Patients\Models\Operation;
 use Modules\Patients\Models\Patient;
 use Modules\Transactions\Constants\Status;
+use Modules\Transactions\Constants\TransactionCategory;
 use Modules\Transactions\Constants\Type;
 use Modules\Transactions\Models\ExternalContact;
 use Modules\Transactions\Models\Transaction;
@@ -38,6 +39,7 @@ class TransactionResource extends JsonResource
       'amount' => $this->amount,
       'details' => $this->details,
       'type' => Type::get_resource($this->type),
+      'category' => TransactionCategory::get_resource($this->category),
       'status' => Status::get_resource($this->status),
       'next_statuses' => Status::get_next_statuses($this->status),
       'created_at' => $this->created_at,

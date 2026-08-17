@@ -95,6 +95,10 @@ class TransactionsApiController extends Controller
         $model->where('status', $request->status);
       }
 
+      if ($request->filled('category')) {
+        $model->where('category', $request->category);
+      }
+
       if ($request->filled('transactionable_type')) {
         $map = [
           'checkup' => Checkup::class,

@@ -53,6 +53,27 @@ class TransactionCategory
     return self::MISC;
   }
 
+  public static function colors(): array
+  {
+    return [
+      self::CHECKUP                  => 'primary',
+      self::ANALYSIS                 => 'info',
+      self::RADIOLOGY                => 'purple',
+      self::OPERATION                => 'danger',
+      self::HOSPITALIZATION          => 'warning',
+      self::HOSPITALIZATION_EXTENSION => 'orange',
+      self::COMMISSION               => 'success',
+      self::SALARY                   => 'teal',
+      self::INSURANCE_COVERAGE       => 'cyan',
+      self::MISC                     => 'secondary',
+    ];
+  }
+
+  public static function get_color(string $category): string
+  {
+    return self::colors()[$category] ?? 'secondary';
+  }
+
   public static function external(): array
   {
     return [
@@ -67,7 +88,7 @@ class TransactionCategory
     return [
       'value' => $category,
       'label' => self::get_name($category),
-      'color' => 'primary',
+      'color' => self::get_color($category),
     ];
   }
 }

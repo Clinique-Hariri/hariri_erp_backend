@@ -11,6 +11,8 @@ class TransactionsDatabaseSeeder extends Seeder
    */
   public function run(): void
   {
-    // $this->call([]);
+    $this->call(
+      TransactionCategoriesBackfillSeeder::class,
+    );
   }
 }
