@@ -2,6 +2,7 @@
 
 namespace Modules\Supplier\Http\Resources;
 
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\Supplier\Models\Supplier;
@@ -15,7 +16,7 @@ class SupplierResource extends JsonResource
             'name' => $this->name,
             'phone' => $this->phone,
             'last_transaction_date' => $this->inventoryTransactions()->latest()->first()->created_at ?? null,
-            'image' => $this->getFirstMediaPath(Supplier::IMAGE),
+            'image' => Helper::mediaRelativeUrl($this->getFirstMedia(Supplier::IMAGE)),
         ];
     }
 }

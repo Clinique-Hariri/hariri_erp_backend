@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use Exception;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class Helper
@@ -39,6 +39,20 @@ class Helper
     $array = array($default => $defaultVal) + $array;
     //dd($default);
     return $array;
+  }
+
+  /**
+   * Build a relative URL (e.g. "storage/2/file.jpg") from a Media instance
+   * stored on the public disk.
+   */
+  public static function mediaRelativeUrl(?Media $media): ?string
+  {
+    if (is_null($media)) {
+      return null;
+    }
+
+    // getPathRelativeToRoot() returns e.g. "2/file.jpg" (no disk root, no domain).
+    return 'storage/' . ltrim($media->getPathRelativeToRoot(), '/');
   }
 
 }

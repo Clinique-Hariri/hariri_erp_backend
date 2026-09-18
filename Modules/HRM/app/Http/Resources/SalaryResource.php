@@ -2,6 +2,7 @@
 
 namespace Modules\HRM\Http\Resources;
 
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\Actions\Http\Resources\ActionResource;
@@ -27,7 +28,7 @@ class SalaryResource extends JsonResource
             'status' => SalaryStatus::get_resource($this->status),
             'next_statuses' => SalaryStatus::get_next_statuses($this->status),
             'pay_date' => $this->pay_date,
-            'report' => $this->getFirstMediaPath(Salary::REPORT),
+            'report' => Helper::mediaRelativeUrl($this->getFirstMedia(Salary::REPORT)),
             'employee' => new EmployeeMiniResource($this->employee),
             'bonuses' => $this->when(
                 $this->whenLoaded('bonuses'),

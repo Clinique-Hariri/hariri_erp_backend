@@ -2,6 +2,7 @@
 
 namespace Modules\HRM\Http\Resources;
 
+use App\Helpers\Helper;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -26,7 +27,7 @@ class EmployeeResource extends JsonResource
       'address' => $this->address,
       'birth_date' => $this->birth_date,
       'hire_date' => $this->hire_date,
-      'image_url' => $this->getFirstMediaPath(Employee::IMAGE),
+      'image_url' => Helper::mediaRelativeUrl($this->getFirstMedia(Employee::IMAGE)),
       'work_months' => $this->work_months,
       'loans_count' => $this->loans_count,
       'contract_status' => ContractStatus::get_resource($this->contract_status),

@@ -2,6 +2,7 @@
 
 namespace Modules\HRM\Http\Resources;
 
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Modules\HRM\Models\CareerChange;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,7 +20,7 @@ class CareerChangeResource extends JsonResource
       'new_contract_id' => $this->new_contract_id,
       'type' => CareerChangeType::get_resource($this->type),
       'notes' => $this->notes,
-      'file' => $this->getLastMediaUrl(CareerChange::FILE),
+      'file' => Helper::mediaRelativeUrl($this->getLastMedia(CareerChange::FILE)),
 
       'employee' => new EmployeeMiniResource($this->whenLoaded('employee')),
       'old_contract' => new ContractResource($this->whenLoaded('oldContract')),

@@ -2,6 +2,7 @@
 
 namespace Modules\HRM\Http\Resources;
 
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\HRM\Models\Employee;
@@ -15,7 +16,7 @@ class EmployeeMiniResource extends JsonResource
       'id' => $this->id,
       'employee_code' => $this->employee_code,
       'fullname' => $this->fullname,
-      'image_url' => $this->getFirstMediaPath(Employee::IMAGE),
+      'image_url' => Helper::mediaRelativeUrl($this->getFirstMedia(Employee::IMAGE)),
     ];
   }
 }

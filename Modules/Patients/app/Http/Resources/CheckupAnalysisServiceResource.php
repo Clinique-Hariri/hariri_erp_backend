@@ -2,6 +2,7 @@
 
 namespace Modules\Patients\Http\Resources;
 
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Modules\MedicalReferences\Http\Resources\MedicalServiceResource;
@@ -17,7 +18,7 @@ class CheckupAnalysisServiceResource extends JsonResource
       'service_name' => $this->medicalService->name,
       'service_price' => $this->service_price,
       'result' => $this->result,
-      'result_attachment' => $this->getFirstMediaPath(CheckupAnalysisService::RESULT_ATTACHMENT),
+      'result_attachment' => Helper::mediaRelativeUrl($this->getFirstMedia(CheckupAnalysisService::RESULT_ATTACHMENT)),
       'created_at' => $this->created_at,
       'updated_at' => $this->updated_at,
 
