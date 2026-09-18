@@ -30,7 +30,7 @@ class CheckupAnalysisResource extends JsonResource
       'doctor_interpretation' => $this->doctor_interpretation,
       'status' => CheckupAnalysisStatus::get_resource($this->status),
       'next_statuses' => CheckupAnalysisStatus::get_next_statuses($this->status),
-//      'result_attachment' => $this->getFirstMediaUrl(CheckupAnalysis::RESULT_ATTACHMENT),
+//      'result_attachment' => $this->getFirstMediaPath(CheckupAnalysis::RESULT_ATTACHMENT),
       'created_at' => $this->created_at,
       'updated_at' => $this->updated_at,
 
@@ -46,10 +46,10 @@ class CheckupAnalysisResource extends JsonResource
       ),
       'services' => CheckupAnalysisServiceResource::collection($this->whenLoaded('services')),
       'completedServices' => CheckupAnalysisServiceResource::collection(
-        $this->whenLoaded('services', fn() => $this->services->filter(fn($s) => !empty($s->result) || !empty($s->getFirstMediaUrl(CheckupAnalysisService::RESULT_ATTACHMENT))))
+        $this->whenLoaded('services', fn() => $this->services->filter(fn($s) => !empty($s->result) || !empty($s->getFirstMediaPath(CheckupAnalysisService::RESULT_ATTACHMENT))))
       ),
       'uncompletedServices' => CheckupAnalysisServiceResource::collection(
-        $this->whenLoaded('services', fn() => $this->services->filter(fn($s) => empty($s->result) && empty($s->getFirstMediaUrl(CheckupAnalysisService::RESULT_ATTACHMENT))))
+        $this->whenLoaded('services', fn() => $this->services->filter(fn($s) => empty($s->result) && empty($s->getFirstMediaPath(CheckupAnalysisService::RESULT_ATTACHMENT))))
       ),
       'payment_action' => new ActionResource($this->whenLoaded('paymentAction')),
       'result_action' => new ActionResource($this->whenLoaded('resultAction')),

@@ -15,7 +15,7 @@ class SupplierResource extends JsonResource
             'name' => $this->name,
             'phone' => $this->phone,
             'last_transaction_date' => $this->inventoryTransactions()->latest()->first()->created_at ?? null,
-            'image' => $this->getFirstMediaUrl(Supplier::IMAGE),
+            'image' => $this->getFirstMediaPath(Supplier::IMAGE),
         ];
     }
 }

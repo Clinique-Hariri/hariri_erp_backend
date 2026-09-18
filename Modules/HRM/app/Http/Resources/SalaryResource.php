@@ -27,7 +27,7 @@ class SalaryResource extends JsonResource
             'status' => SalaryStatus::get_resource($this->status),
             'next_statuses' => SalaryStatus::get_next_statuses($this->status),
             'pay_date' => $this->pay_date,
-            'report' => $this->getFirstMediaUrl(Salary::REPORT),
+            'report' => $this->getFirstMediaPath(Salary::REPORT),
             'employee' => new EmployeeMiniResource($this->employee),
             'bonuses' => $this->when(
                 $this->whenLoaded('bonuses'),

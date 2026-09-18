@@ -15,7 +15,7 @@ class EmployeeMiniResource extends JsonResource
       'id' => $this->id,
       'employee_code' => $this->employee_code,
       'fullname' => $this->fullname,
-      'image_url' => $this->getFirstMediaUrl(Employee::IMAGE),
+      'image_url' => $this->getFirstMediaPath(Employee::IMAGE),
     ];
   }
 }

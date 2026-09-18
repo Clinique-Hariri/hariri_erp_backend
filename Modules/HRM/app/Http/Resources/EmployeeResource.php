@@ -26,7 +26,7 @@ class EmployeeResource extends JsonResource
       'address' => $this->address,
       'birth_date' => $this->birth_date,
       'hire_date' => $this->hire_date,
-      'image_url' => $this->getFirstMediaUrl(Employee::IMAGE),
+      'image_url' => $this->getFirstMediaPath(Employee::IMAGE),
       'work_months' => $this->work_months,
       'loans_count' => $this->loans_count,
       'contract_status' => ContractStatus::get_resource($this->contract_status),
