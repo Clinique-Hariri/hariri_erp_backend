@@ -28,6 +28,7 @@ class PermissionSeeder extends Seeder
       UserRoles::OPERATIONS_MANAGER => PermissionNames::operationsManager(),
       UserRoles::HUMAN_RESOURCES => PermissionNames::humanResources(),
       UserRoles::INVENTORY_MANAGER => PermissionNames::inventoryManager(),
+      UserRoles::NURSE => PermissionNames::nurse(),
     ];
 
     // Assign permissions to roles

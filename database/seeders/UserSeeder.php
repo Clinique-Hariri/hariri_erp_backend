@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
     foreach (UserRoles::all() as $role) {
       $type = match ($role) {
         UserRoles::SUPER_ADMIN, UserRoles::ADMIN => UserTypes::ADMIN,
-        UserRoles::RECEPTIONIST, UserRoles::DOCTOR, UserRoles::RADIOLOGY_MANAGER, UserRoles::LABORATORY_MANAGER, UserRoles::OPERATIONS_MANAGER, UserRoles::ACCOUNTANT => UserTypes::CLINIC,
+        UserRoles::RECEPTIONIST, UserRoles::DOCTOR, UserRoles::RADIOLOGY_MANAGER, UserRoles::LABORATORY_MANAGER, UserRoles::OPERATIONS_MANAGER, UserRoles::ACCOUNTANT, UserRoles::NURSE => UserTypes::CLINIC,
         UserRoles::HUMAN_RESOURCES => UserTypes::HUMAN_RESOURCE,
         UserRoles::INVENTORY_MANAGER => UserTypes::INVENTORY,
         default => UserTypes::CLINIC,

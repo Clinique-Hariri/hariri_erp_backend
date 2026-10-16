@@ -798,6 +798,10 @@ class PermissionNames
       self::PRESCRIPTIONS_DELETE        => $lang ? __('permissions.'.self::PRESCRIPTIONS_DELETE) : self::PRESCRIPTIONS_DELETE,
     ];
   }
+  public static function nurse($lang = null):array
+  {
+    return [];
+  }
   public static function radiologyManager($lang = null):array
   {
     return [

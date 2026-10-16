@@ -43,6 +43,7 @@ return [
     'accountant' => 'Comptable',
     'human_resources' => 'Ressources Humaines',
     'inventory_manager' => 'Responsable des Stocks',
+    'nurse' => 'Infirmier/Infirmière',
   ],
 
   'types' => [
