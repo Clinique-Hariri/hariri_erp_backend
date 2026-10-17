@@ -501,6 +501,14 @@ class PermissionNames
       self::CHECKUPS_UPDATE_TO_IN_CONSULTATION  => $lang ? __('permissions.'.self::CHECKUPS_UPDATE_TO_IN_CONSULTATION) : self::CHECKUPS_UPDATE_TO_IN_CONSULTATION,
       self::CHECKUPS_UPDATE_TO_COMPLETED        => $lang ? __('permissions.'.self::CHECKUPS_UPDATE_TO_COMPLETED) : self::CHECKUPS_UPDATE_TO_COMPLETED,
 
+      self::HOME_CHECKUPS_VIEW          => $lang ? __('permissions.'.self::HOME_CHECKUPS_VIEW) : self::HOME_CHECKUPS_VIEW,
+      self::HOME_CHECKUPS_CREATE        => $lang ? __('permissions.'.self::HOME_CHECKUPS_CREATE) : self::HOME_CHECKUPS_CREATE,
+      self::HOME_CHECKUPS_UPDATE        => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE) : self::HOME_CHECKUPS_UPDATE,
+      self::HOME_CHECKUPS_DELETE        => $lang ? __('permissions.'.self::HOME_CHECKUPS_DELETE) : self::HOME_CHECKUPS_DELETE,
+      self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS  => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS) : self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS,
+      self::HOME_CHECKUPS_UPDATE_TO_COMPLETED    => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE_TO_COMPLETED) : self::HOME_CHECKUPS_UPDATE_TO_COMPLETED,
+      self::HOME_CHECKUPS_UPDATE_TO_CANCELLED    => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE_TO_CANCELLED) : self::HOME_CHECKUPS_UPDATE_TO_CANCELLED,
+
       self::CHECKUP_SERVICES_VIEW       => $lang ? __('permissions.'.self::CHECKUP_SERVICES_VIEW) : self::CHECKUP_SERVICES_VIEW,
       self::CHECKUP_SERVICES_CREATE     => $lang ? __('permissions.'.self::CHECKUP_SERVICES_CREATE) : self::CHECKUP_SERVICES_CREATE,
       self::CHECKUP_SERVICES_UPDATE     => $lang ? __('permissions.'.self::CHECKUP_SERVICES_UPDATE) : self::CHECKUP_SERVICES_UPDATE,

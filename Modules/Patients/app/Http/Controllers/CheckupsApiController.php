@@ -43,6 +43,7 @@ class CheckupsApiController extends Controller
 
     try {
       $model = Checkup::with(['doctor.user.employee', 'ticket', 'patient.insuranceSocietyBranch.insuranceSociety', 'unpaidCheckupAnalyses.services.medicalService', 'paidCheckupAnalyses.services.medicalService', 'paymentAction.user'])
+        ->whereNull('home_checkup_id')
         ->whereHas('patient', function ($query) {
           $query->filterByInsuranceSociety();
         });

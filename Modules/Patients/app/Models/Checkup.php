@@ -22,6 +22,7 @@ class Checkup extends Model
 {
   protected $fillable = [
     'checkup_number',
+    'home_checkup_id',
     'initial_price',
     'total_price',
     'original_price',
@@ -65,6 +66,11 @@ class Checkup extends Model
   public function patient(): BelongsTo
   {
     return $this->belongsTo(Patient::class);
+  }
+
+  public function homeCheckup(): BelongsTo
+  {
+    return $this->belongsTo(HomeCheckup::class);
   }
 
   public function checkupAnalyses(): HasMany
