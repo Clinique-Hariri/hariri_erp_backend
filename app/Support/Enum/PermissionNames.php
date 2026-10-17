@@ -63,6 +63,17 @@ class PermissionNames
   public const string CHECKUPS_UPDATE_TO_IN_CONSULTATION = 'checkups.update.to_in_consultation';
   public const string CHECKUPS_UPDATE_TO_COMPLETED = 'checkups.update.to_completed';
 
+  // home checkups
+  public const string HOME_CHECKUPS_VIEW = 'home_checkups.view';
+  public const string HOME_CHECKUPS_CREATE = 'home_checkups.create';
+  public const string HOME_CHECKUPS_UPDATE = 'home_checkups.update';
+  public const string HOME_CHECKUPS_DELETE = 'home_checkups.delete';
+
+  // home checkups statuses
+  public const string HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS = 'home_checkups.update.to_in_progress';
+  public const string HOME_CHECKUPS_UPDATE_TO_COMPLETED = 'home_checkups.update.to_completed';
+  public const string HOME_CHECKUPS_UPDATE_TO_CANCELLED = 'home_checkups.update.to_cancelled';
+
   // checkup services
   public const string CHECKUP_SERVICES_VIEW = 'checkup_services.view';
   public const string CHECKUP_SERVICES_CREATE = 'checkup_services.create';
@@ -290,6 +301,14 @@ class PermissionNames
       self::CHECKUPS_UPDATE_TO_PENDING          => $lang ? __('permissions.'.self::CHECKUPS_UPDATE_TO_PENDING) : self::CHECKUPS_UPDATE_TO_PENDING,
       self::CHECKUPS_UPDATE_TO_IN_CONSULTATION  => $lang ? __('permissions.'.self::CHECKUPS_UPDATE_TO_IN_CONSULTATION) : self::CHECKUPS_UPDATE_TO_IN_CONSULTATION,
       self::CHECKUPS_UPDATE_TO_COMPLETED        => $lang ? __('permissions.'.self::CHECKUPS_UPDATE_TO_COMPLETED) : self::CHECKUPS_UPDATE_TO_COMPLETED,
+
+      self::HOME_CHECKUPS_VIEW          => $lang ? __('permissions.'.self::HOME_CHECKUPS_VIEW) : self::HOME_CHECKUPS_VIEW,
+      self::HOME_CHECKUPS_CREATE        => $lang ? __('permissions.'.self::HOME_CHECKUPS_CREATE) : self::HOME_CHECKUPS_CREATE,
+      self::HOME_CHECKUPS_UPDATE        => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE) : self::HOME_CHECKUPS_UPDATE,
+      self::HOME_CHECKUPS_DELETE        => $lang ? __('permissions.'.self::HOME_CHECKUPS_DELETE) : self::HOME_CHECKUPS_DELETE,
+      self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS  => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS) : self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS,
+      self::HOME_CHECKUPS_UPDATE_TO_COMPLETED    => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE_TO_COMPLETED) : self::HOME_CHECKUPS_UPDATE_TO_COMPLETED,
+      self::HOME_CHECKUPS_UPDATE_TO_CANCELLED    => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE_TO_CANCELLED) : self::HOME_CHECKUPS_UPDATE_TO_CANCELLED,
 
       self::CHECKUP_SERVICES_VIEW       => $lang ? __('permissions.'.self::CHECKUP_SERVICES_VIEW) : self::CHECKUP_SERVICES_VIEW,
       self::CHECKUP_SERVICES_CREATE     => $lang ? __('permissions.'.self::CHECKUP_SERVICES_CREATE) : self::CHECKUP_SERVICES_CREATE,
@@ -800,7 +819,25 @@ class PermissionNames
   }
   public static function nurse($lang = null):array
   {
-    return [];
+    return [
+      self::PATIENTS_VIEW               => $lang ? __('permissions.'.self::PATIENTS_VIEW) : self::PATIENTS_VIEW,
+
+      self::CHECKUPS_VIEW               => $lang ? __('permissions.'.self::CHECKUPS_VIEW) : self::CHECKUPS_VIEW,
+
+      self::CHECKUPS_VITAL_SIGNS_VIEW    => $lang ? __('permissions.'.self::CHECKUPS_VITAL_SIGNS_VIEW) : self::CHECKUPS_VITAL_SIGNS_VIEW,
+      self::CHECKUPS_VITAL_SIGNS_UPDATE  => $lang ? __('permissions.'.self::CHECKUPS_VITAL_SIGNS_UPDATE) : self::CHECKUPS_VITAL_SIGNS_UPDATE,
+
+      self::CHRONIC_DISEASES_PATIENT_VIEW       => $lang ? __('permissions.'.self::CHRONIC_DISEASES_PATIENT_VIEW) : self::CHRONIC_DISEASES_PATIENT_VIEW,
+      self::CHRONIC_DISEASES_PATIENT_CREATE     => $lang ? __('permissions.'.self::CHRONIC_DISEASES_PATIENT_CREATE) : self::CHRONIC_DISEASES_PATIENT_CREATE,
+      self::CHRONIC_DISEASES_PATIENT_UPDATE     => $lang ? __('permissions.'.self::CHRONIC_DISEASES_PATIENT_UPDATE) : self::CHRONIC_DISEASES_PATIENT_UPDATE,
+
+      self::PRESCRIPTIONS_VIEW          => $lang ? __('permissions.'.self::PRESCRIPTIONS_VIEW) : self::PRESCRIPTIONS_VIEW,
+
+      self::HOME_CHECKUPS_VIEW          => $lang ? __('permissions.'.self::HOME_CHECKUPS_VIEW) : self::HOME_CHECKUPS_VIEW,
+      self::HOME_CHECKUPS_UPDATE        => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE) : self::HOME_CHECKUPS_UPDATE,
+      self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS  => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS) : self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS,
+      self::HOME_CHECKUPS_UPDATE_TO_COMPLETED    => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE_TO_COMPLETED) : self::HOME_CHECKUPS_UPDATE_TO_COMPLETED,
+    ];
   }
   public static function radiologyManager($lang = null):array
   {
@@ -951,6 +988,7 @@ class PermissionNames
       'doctors' => $lang ? __('permissions.group.doctors') : 'doctors',
       'patients' => $lang ? __('permissions.group.patients') : 'patients',
       'checkups' => $lang ? __('permissions.group.checkups') : 'checkups',
+      'home_checkups' => $lang ? __('permissions.group.home_checkups') : 'home_checkups',
       'checkup_services' => $lang ? __('permissions.group.checkup_services') : 'checkup_services',
       'checkup_radiology' => $lang ? __('permissions.group.checkup_radiology') : 'checkup_radiology',
       'hospitalizations' => $lang ? __('permissions.group.hospitalizations') : 'hospitalizations',

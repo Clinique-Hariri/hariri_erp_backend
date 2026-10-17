@@ -10,6 +10,7 @@ use Modules\Patients\Constants\OperationStatus;
 use Modules\Patients\Http\Controllers\AnalysesApiController;
 use Modules\Patients\Http\Controllers\CheckupAnalysesApiController;
 use Modules\Patients\Http\Controllers\CheckupsApiController;
+use Modules\Patients\Http\Controllers\HomeCheckupsApiController;
 use Modules\Patients\Http\Controllers\ChronicDiseasesPatientApiController;
 use Modules\Patients\Http\Controllers\HospitalizationsApiController;
 use Modules\Patients\Http\Controllers\OperationApiController;
@@ -47,6 +48,11 @@ Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
   });
   Route::apiResource('checkups', CheckupsApiController::class);
   Route::post('checkups-multi-destroy', [CheckupsApiController::class, 'multiDestroy']);
+
+  Route::get('home-checkups/available-nurses', [HomeCheckupsApiController::class, 'availableNurses'])->name('homeCheckups.availableNurses');
+  Route::put('home-checkups/{id}/status', [HomeCheckupsApiController::class, 'updateStatus'])->name('homeCheckups.updateStatus');
+  Route::apiResource('home-checkups', HomeCheckupsApiController::class);
+  Route::post('home-checkups-multi-destroy', [HomeCheckupsApiController::class, 'multiDestroy']);
 
   Route::apiResource('hospitalizations', HospitalizationsApiController::class);
 //  Route::put('hospitalizations/{id}/extend-stay', [HospitalizationsApiController::class, 'extendStay'])->name('hospitalizations.extendStay');

@@ -52,6 +52,14 @@ return [
   'checkups.update.to_in_consultation' => 'Changer la visite en en consultation',
   'checkups.update.to_completed' => 'Changer la visite en terminé',
 
+  'home_checkups.view' => 'Voir les visites à domicile',
+  'home_checkups.create' => 'Créer une visite à domicile',
+  'home_checkups.update' => 'Modifier une visite à domicile',
+  'home_checkups.delete' => 'Supprimer une visite à domicile',
+  'home_checkups.update.to_in_progress' => 'Changer la visite à domicile en en cours',
+  'home_checkups.update.to_completed' => 'Changer la visite à domicile en terminé',
+  'home_checkups.update.to_cancelled' => 'Changer la visite à domicile en annulé',
+
   'checkup_services.view' => 'Voir les services du visite',
   'checkup_services.create' => 'Créer un service du visite',
   'checkup_services.update' => 'Modifier un service du visite',
@@ -212,6 +220,7 @@ return [
     'doctors' => 'Médecins',
     'patients' => 'Patients',
     'checkups' => 'Examens',
+    'home_checkups' => 'Visites à domicile',
     'checkup_services' => 'Services du visite',
     'checkup_radiology' => 'Radiologies du visite',
     'hospitalizations' => 'Hospitalisations',

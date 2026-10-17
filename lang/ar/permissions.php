@@ -52,6 +52,14 @@ return [
   'checkups.update.to_in_consultation' => 'تغيير الفحص إلى قيد الاستشارة',
   'checkups.update.to_completed' => 'تغيير الفحص إلى مكتمل',
 
+  'home_checkups.view' => 'عرض الفحوصات المنزلية',
+  'home_checkups.create' => 'إنشاء فحص منزلي',
+  'home_checkups.update' => 'تعديل فحص منزلي',
+  'home_checkups.delete' => 'حذف فحص منزلي',
+  'home_checkups.update.to_in_progress' => 'تغيير الفحص المنزلي إلى قيد التنفيذ',
+  'home_checkups.update.to_completed' => 'تغيير الفحص المنزلي إلى مكتمل',
+  'home_checkups.update.to_cancelled' => 'تغيير الفحص المنزلي إلى ملغي',
+
   'checkup_services.view' => 'عرض خدمات الفحص',
   'checkup_services.create' => 'إنشاء خدمة فحص',
   'checkup_services.update' => 'تعديل خدمة فحص',
@@ -212,6 +220,7 @@ return [
     'doctors' => 'الأطباء',
     'patients' => 'المرضى',
     'checkups' => 'الفحوصات',
+    'home_checkups' => 'الفحوصات المنزلية',
     'checkup_services' => 'خدمات الفحص',
     'checkup_radiology' => 'فحوصات الأشعة',
     'hospitalizations' => 'الاستشفاء',

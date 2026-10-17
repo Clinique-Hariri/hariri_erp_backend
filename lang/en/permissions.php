@@ -52,6 +52,14 @@ return [
   'checkups.update.to_in_consultation' => 'Change checkup to in consultation',
   'checkups.update.to_completed' => 'Change checkup to completed',
 
+  'home_checkups.view' => 'View home checkups',
+  'home_checkups.create' => 'Create home checkup',
+  'home_checkups.update' => 'Edit home checkup',
+  'home_checkups.delete' => 'Delete home checkup',
+  'home_checkups.update.to_in_progress' => 'Change home checkup to in progress',
+  'home_checkups.update.to_completed' => 'Change home checkup to completed',
+  'home_checkups.update.to_cancelled' => 'Change home checkup to cancelled',
+
   'checkup_services.view' => 'View checkup services',
   'checkup_services.create' => 'Create checkup service',
   'checkup_services.update' => 'Edit checkup service',
@@ -212,6 +220,7 @@ return [
     'doctors' => 'Doctors',
     'patients' => 'Patients',
     'checkups' => 'Checkups',
+    'home_checkups' => 'Home Checkups',
     'checkup_services' => 'Checkup Services',
     'checkup_radiology' => 'Checkup Radiology',
     'hospitalizations' => 'Hospitalizations',
