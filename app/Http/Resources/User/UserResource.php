@@ -31,6 +31,7 @@ class UserResource extends JsonResource
       'birthdate' => $this->birthdate,
       'type' => UserTypes::get_resource($this->type),
       'doctor_id' => $this->doctor?->id??null,
+      'employee_id' => $this->employee?->id??null,
       'status' => UserStatus::get_resource($this->status),
       'next_statuses' => UserStatus::get_next_statuses($this->status),
       'role' => $this->roles()->first()->name,
