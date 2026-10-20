@@ -823,6 +823,11 @@ class PermissionNames
       self::PRESCRIPTIONS_CREATE        => $lang ? __('permissions.'.self::PRESCRIPTIONS_CREATE) : self::PRESCRIPTIONS_CREATE,
       self::PRESCRIPTIONS_UPDATE        => $lang ? __('permissions.'.self::PRESCRIPTIONS_UPDATE) : self::PRESCRIPTIONS_UPDATE,
       self::PRESCRIPTIONS_DELETE        => $lang ? __('permissions.'.self::PRESCRIPTIONS_DELETE) : self::PRESCRIPTIONS_DELETE,
+
+      self::HOME_CHECKUPS_VIEW          => $lang ? __('permissions.'.self::HOME_CHECKUPS_VIEW) : self::HOME_CHECKUPS_VIEW,
+      self::HOME_CHECKUPS_UPDATE        => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE) : self::HOME_CHECKUPS_UPDATE,
+      self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS  => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS) : self::HOME_CHECKUPS_UPDATE_TO_IN_PROGRESS,
+      self::HOME_CHECKUPS_UPDATE_TO_COMPLETED    => $lang ? __('permissions.'.self::HOME_CHECKUPS_UPDATE_TO_COMPLETED) : self::HOME_CHECKUPS_UPDATE_TO_COMPLETED,
     ];
   }
   public static function nurse($lang = null):array

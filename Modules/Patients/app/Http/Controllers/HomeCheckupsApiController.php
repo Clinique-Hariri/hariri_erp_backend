@@ -64,6 +64,10 @@ class HomeCheckupsApiController extends Controller
         $model->where('patient_id', $request->get('patient_id'));
       }
 
+      if ($request->filled('nurse_id')) {
+        $model->whereHas('nurses', fn($query) => $query->whereKey($request->get('nurse_id')));
+      }
+
       if ($request->filled('created_at_from')) {
         $model->whereDate('created_at', '>=', $request->created_at_from);
       }
