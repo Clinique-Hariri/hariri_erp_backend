@@ -23,7 +23,7 @@ class HomeCheckupResource extends JsonResource
       'patient_fullname' => $this->patient_fullname,
       'patient_phone' => $this->patient_phone,
       'patient_birthdate' => $this->patient_birthdate?->format('Y-m-d'),
-      'requested_patient_number' => $this->requested_patient_number,
+      'patient_number' => $this->patient_number,
       'patient' => new PatientResource($this->whenLoaded('patient')),
 
       'requested_visit_type' => HomeCheckupVisitType::get_resource($this->requested_visit_type),

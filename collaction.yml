@@ -9395,7 +9395,7 @@ items:
                   - name: patient_birthdate
                     type: text
                     value: 2000-01-01
-                  - name: requested_patient_number
+                  - name: patient_number
                     type: text
                     value: ''
                     disabled: true

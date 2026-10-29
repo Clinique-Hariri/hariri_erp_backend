@@ -12,10 +12,10 @@ class StoreHomeCheckupRequest extends FormRequest
   {
     return [
       'mobile_request_id' => ['nullable', 'string', 'max:255', 'unique:home_checkups,mobile_request_id'],
-      'patient_fullname' => ['required', 'string', 'max:255'],
+      'patient_fullname' => ['nullable', 'string', 'max:255'],
       'patient_phone' => ['nullable', 'string', 'max:255'],
       'patient_birthdate' => ['nullable', 'date'],
-      'requested_patient_number' => ['nullable', 'string', 'max:255'],
+      'patient_number' => ['nullable', 'string', 'max:255'],
       'patient_id' => ['nullable', 'exists:patients,id'],
       'requested_visit_type' => ['nullable', Rule::in(HomeCheckupVisitType::all())],
       'visit_type' => ['required', Rule::in(HomeCheckupVisitType::all())],

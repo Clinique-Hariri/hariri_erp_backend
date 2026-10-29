@@ -2,6 +2,8 @@
 
 namespace Modules\Patients\Http\Controllers;
 
+use App\Constants\BloodType;
+use App\Constants\Gender;
 use App\Http\Controllers\Controller;
 use App\Support\Enum\PermissionNames;
 use App\Support\Enum\UserRoles;
@@ -9,6 +11,7 @@ use App\Traits\ApiResponseTrait;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Modules\Clinic\Models\Doctor;
 use Modules\HRM\Models\Employee;
 use Modules\Patients\Constants\CheckupStatus;
@@ -121,6 +124,8 @@ class HomeCheckupsApiController extends Controller
     $data = $this->validateRequest($request, StoreHomeCheckupRequest::rules());
 
     try {
+      $data = $this->resolvePatient($data);
+
       $data['status'] = HomeCheckupStatus::SCHEDULED;
 
       $model = DB::transaction(function () use ($data) {
@@ -150,9 +155,50 @@ class HomeCheckupsApiController extends Controller
       return $this->successResponse(
         data: new HomeCheckupResource($model)
       );
+    } catch (ValidationException $e) {
+      return $this->errorResponse($e->getMessage(), 422);
     } catch (Throwable $e) {
       return $this->errorResponse($e->getMessage(), 500);
     }
+  }
+
+  /**
+   * Resolve the patient for a home checkup, or create a new one from the
+   * supplied patient details. Ensures `patient_id` is always set before
+   * persisting the home checkup.
+   */
+  private function resolvePatient(array $data): array
+  {
+    $patient = null;
+
+    if (!empty($data['patient_id'])) {
+      $patient = Patient::findOrFail($data['patient_id']);
+    } elseif (!empty($data['patient_number'])) {
+      $patient = Patient::where('patient_number', $data['patient_number'])->first();
+
+      if (!$patient) {
+        throw ValidationException::withMessages([
+          'patient_number' => 'The provided patient number is not linked to any patient.',
+        ]);
+      }
+    } elseif (!empty($data['patient_fullname'])) {
+      $patient = Patient::create([
+        'fullname' => $data['patient_fullname'],
+        'phone' => $data['patient_phone'] ?? null,
+        'birthdate' => $data['patient_birthdate'] ?? null,
+        'gender' => Gender::default(),
+        'blood_type' => BloodType::default(),
+      ]);
+    } else {
+      throw ValidationException::withMessages([
+        'patient' => 'Patient details are required. Provide patient_id, patient_number or patient_fullname.',
+      ]);
+    }
+
+    $data['patient_id'] = $patient->id;
+    unset($data['patient_number']);
+
+    return $data;
   }
 
   public function update(Request $request, $id)

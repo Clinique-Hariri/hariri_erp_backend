@@ -22,7 +22,7 @@ class HomeCheckup extends Model
     'patient_fullname',
     'patient_phone',
     'patient_birthdate',
-    'requested_patient_number',
+    'patient_number',
     'patient_id',
     'requested_visit_type',
     'visit_type',
