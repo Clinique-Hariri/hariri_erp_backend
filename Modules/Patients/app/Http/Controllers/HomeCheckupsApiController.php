@@ -25,6 +25,8 @@ use Modules\HRM\Http\Resources\EmployeeMiniResource;
 use Modules\Patients\Models\Checkup;
 use Modules\Patients\Models\HomeCheckup;
 use Modules\Patients\Models\Patient;
+use Modules\Settings\Constants\SettingsKeys;
+use Modules\Settings\Models\Setting;
 use Throwable;
 
 class HomeCheckupsApiController extends Controller
@@ -147,7 +149,9 @@ class HomeCheckupsApiController extends Controller
           $model->nurses()->sync($nurseIds);
         }
 
-        $model->load(['patient', 'doctor.user.employee', 'services', 'nurses']);
+        $this->spawnDoctorCheckup($model);
+
+        $model->load(['patient', 'doctor.user.employee', 'services', 'nurses', 'checkup.doctor.user.employee', 'checkup.patient', 'checkup.ticket']);
 
         return $model;
       });
@@ -201,6 +205,64 @@ class HomeCheckupsApiController extends Controller
     return $data;
   }
 
+  /**
+   * Spawn a regular Checkup for a home checkup when a doctor is involved.
+   *
+   * The spawned checkup is priced with the doctor's `checkup_price` fee,
+   * following the same pricing rules applied to regular checkups (insurance
+   * society override, coverage amount, and payment waiving).
+   */
+  private function spawnDoctorCheckup(HomeCheckup $homeCheckup): void
+  {
+    if ($homeCheckup->visit_type !== HomeCheckupVisitType::WITH_DOCTOR) {
+      return;
+    }
+
+    if (!$homeCheckup->doctor_id || !$homeCheckup->patient_id || $homeCheckup->checkup_id) {
+      return;
+    }
+
+    $doctor = Doctor::findOrFail($homeCheckup->doctor_id);
+    $patient = Patient::with('insuranceSocietyBranch.insuranceSociety')->findOrFail($homeCheckup->patient_id);
+
+    $insuranceSociety = $patient->insuranceSocietyBranch?->insuranceSociety;
+
+    $checkupPrice = round(
+      $insuranceSociety?->checkupPricings()
+        ->where('doctor_id', $doctor->id)
+        ->value('checkup_price')
+        ?? $doctor->checkup_price,
+      2
+    );
+
+    $coverageAmount = insurance_coverage_amount($patient->insuranceSocietyBranch, $checkupPrice);
+
+    $waiveCheckup = $patient->insuranceSocietyBranch
+      && (bool) Setting::where('key', SettingsKeys::WAIVE_CHECKUP_PAYMENTS)->value('value');
+
+    $initialPrice = round($checkupPrice - $coverageAmount, 2);
+
+    $checkup = Checkup::create([
+      'home_checkup_id' => $homeCheckup->id,
+      'doctor_id' => $doctor->id,
+      'patient_id' => $homeCheckup->patient_id,
+      'date' => $homeCheckup->scheduled_at?->format('Y-m-d') ?? now()->toDateString(),
+      'time' => $homeCheckup->scheduled_at?->format('H:i'),
+      'status' => CheckupStatus::DRAFT,
+      'original_price' => $doctor->checkup_price,
+      'initial_price' => $initialPrice,
+      'total_price' => $waiveCheckup ? 0 : $initialPrice,
+      'coverage_amount' => $coverageAmount,
+    ]);
+
+    $checkup->ticket()->create([
+      'date' => $checkup->date,
+    ]);
+
+    $homeCheckup->checkup_id = $checkup->id;
+    $homeCheckup->save();
+  }
+
   public function update(Request $request, $id)
   {
     $this->authorizePermission(PermissionNames::HOME_CHECKUPS_UPDATE);
@@ -231,9 +293,11 @@ class HomeCheckupsApiController extends Controller
         if (is_array($nurseIds)) {
           $model->nurses()->sync($nurseIds);
         }
+
+        $this->spawnDoctorCheckup($model);
       });
 
-      $model->load(['patient', 'doctor.user.employee', 'services', 'nurses', 'checkup']);
+      $model->load(['patient', 'doctor.user.employee', 'services', 'nurses', 'checkup.doctor.user.employee', 'checkup.patient', 'checkup.ticket']);
 
       return $this->successResponse(
         data: new HomeCheckupResource($model)
