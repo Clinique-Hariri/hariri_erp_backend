@@ -27,8 +27,6 @@ class StoreHomeCheckupRequest extends FormRequest
       'preferred_time' => ['nullable', 'date_format:H:i'],
       'scheduled_at' => ['required', 'date'],
       'base_price' => ['nullable', 'numeric', 'min:0'],
-      'services_total' => ['nullable', 'numeric', 'min:0'],
-      'total_price' => ['nullable', 'numeric', 'min:0'],
       'coverage_amount' => ['nullable', 'numeric', 'min:0'],
       'notes' => ['nullable', 'string', 'max:1000'],
       'services' => ['nullable', 'array'],

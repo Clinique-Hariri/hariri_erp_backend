@@ -130,8 +130,12 @@ class HomeCheckupsApiController extends Controller
 
       $data['status'] = HomeCheckupStatus::SCHEDULED;
 
-      $model = DB::transaction(function () use ($data) {
-        $services = $data['services'] ?? [];
+      $services = $data['services'] ?? [];
+      $prices = $this->calculatePrices((float) ($data['base_price'] ?? 0), $services);
+      $data['services_total'] = $prices['services_total'];
+      $data['total_price'] = $prices['total_price'];
+
+      $model = DB::transaction(function () use ($data, $services) {
         $nurseIds = $data['nurse_ids'] ?? [];
 
         unset($data['services'], $data['nurse_ids']);
@@ -206,6 +210,22 @@ class HomeCheckupsApiController extends Controller
   }
 
   /**
+   * Calculate the services total and total price for a home checkup.
+   */
+  private function calculatePrices(float $basePrice, array $services): array
+  {
+    $servicesTotal = round(
+      collect($services)->sum(fn($service) => (float) ($service['service_price'] ?? 0)),
+      2
+    );
+
+    return [
+      'services_total' => $servicesTotal,
+      'total_price' => round($basePrice + $servicesTotal, 2),
+    ];
+  }
+
+  /**
    * Spawn a regular Checkup for a home checkup when a doctor is involved.
    *
    * The spawned checkup is priced with the doctor's `checkup_price` fee,
@@ -277,6 +297,21 @@ class HomeCheckupsApiController extends Controller
         $nurseIds = $data['nurse_ids'] ?? null;
 
         unset($data['services'], $data['nurse_ids']);
+
+        if (array_key_exists('base_price', $data) || is_array($services)) {
+          $basePrice = array_key_exists('base_price', $data)
+            ? (float) ($data['base_price'] ?? 0)
+            : (float) $model->base_price;
+
+          $effectiveServices = is_array($services)
+            ? $services
+            : $model->services()->get(['service_price'])->toArray();
+
+          $prices = $this->calculatePrices($basePrice, $effectiveServices);
+
+          $data['services_total'] = $prices['services_total'];
+          $data['total_price'] = $prices['total_price'];
+        }
 
         $model->update($data);
 

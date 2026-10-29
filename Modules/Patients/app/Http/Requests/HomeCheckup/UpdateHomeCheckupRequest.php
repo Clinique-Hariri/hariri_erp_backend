@@ -25,8 +25,6 @@ class UpdateHomeCheckupRequest extends FormRequest
       'preferred_time' => ['sometimes', 'nullable', 'date_format:H:i'],
       'scheduled_at' => ['sometimes', 'nullable', 'date'],
       'base_price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
-      'services_total' => ['sometimes', 'nullable', 'numeric', 'min:0'],
-      'total_price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
       'coverage_amount' => ['sometimes', 'nullable', 'numeric', 'min:0'],
       'notes' => ['sometimes', 'nullable', 'string', 'max:1000'],
       'services' => ['sometimes', 'nullable', 'array'],
