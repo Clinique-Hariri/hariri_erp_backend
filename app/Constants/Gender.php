@@ -8,12 +8,14 @@ class Gender
 {
     const MALE = 'male';
     const FEMALE = 'female';
+    const NOT_SPECIFIED = 'not_specified';
 
     public static function all($translated = false):array
     {
         return [
           self::MALE => $translated ? __('user.genders.male') : self::MALE,
-          self::FEMALE => $translated ? __('user.genders.female') : self::FEMALE
+          self::FEMALE => $translated ? __('user.genders.female') : self::FEMALE,
+          self::NOT_SPECIFIED => $translated ? __('user.genders.not_specified') : self::NOT_SPECIFIED
         ];
     }
 
@@ -22,6 +24,7 @@ class Gender
         return [
           self::MALE => 'success',
           self::FEMALE => 'danger',
+          self::NOT_SPECIFIED => 'secondary',
         ];
     }
 
@@ -47,7 +50,7 @@ class Gender
 
     public static function default():string
     {
-        return self::MALE;
+        return self::NOT_SPECIFIED;
     }
 
     public static function get_resource(string $gender):array

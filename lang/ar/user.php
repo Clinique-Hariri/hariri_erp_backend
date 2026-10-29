@@ -29,6 +29,7 @@ return [
   'genders' => [
     'male' => 'ذكر',
     'female' => 'أنثى',
+    'not_specified' => 'غير محدد',
   ],
 
   'roles' => [

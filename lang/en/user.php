@@ -30,6 +30,7 @@ return [
   'genders' => [
     'male' => 'Male',
     'female' => 'Female',
+    'not_specified' => 'Not specified',
   ],
 
   'roles' => [
