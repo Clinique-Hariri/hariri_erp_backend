@@ -52,6 +52,7 @@ class UpdateEmployeeRequest extends FormRequest
         'numeric',
         'min:0'
       ],
+      'home_checkup_eligible' => ['boolean'],
       'commission_percentages' => [
         Rule::requiredIf(function () use ($employee) {
           return $employee->user?->doctor;

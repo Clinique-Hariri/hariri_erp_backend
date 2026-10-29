@@ -16,6 +16,7 @@ class DoctorMiniResource extends JsonResource
       'id' => $this->id,
       'checkup_price' => $this->checkup_price,
       'commission_percentages' => $this->commission_percentages,
+      'home_checkup_eligible' => $this->home_checkup_eligible,
       'speciality' => $this->whenLoaded('speciality', new SpecialityMiniResource($this->speciality)),
     ];
   }

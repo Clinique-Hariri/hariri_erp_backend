@@ -25,6 +25,7 @@ class StoreEmployeeRequest extends FormRequest
       'create_doctor' => ['required', 'boolean'],
       'speciality_id' => ['required_if:create_doctor,true', 'exists:specialities,id'],
       'checkup_price' => ['required_if:create_doctor,true', 'numeric', 'min:0'],
+      'home_checkup_eligible' => ['boolean'],
       'commission_percentages' => ['required_if:create_doctor,true', 'array'],
       'commission_percentages.checkup' => ['required_if:create_doctor,true', 'numeric', 'min:0', 'max:100'],
       'commission_percentages.analysis' => ['required_if:create_doctor,true', 'numeric', 'min:0', 'max:100'],

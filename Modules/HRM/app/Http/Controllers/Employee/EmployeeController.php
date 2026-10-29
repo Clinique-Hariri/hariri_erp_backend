@@ -153,6 +153,7 @@ class EmployeeController extends Controller
             'user_id' => $user->id,
             'speciality_id' => $employeeData['speciality_id'],
             'checkup_price' => $employeeData['checkup_price'],
+            'home_checkup_eligible' => $request->boolean('home_checkup_eligible'),
             'commission_percentages' => $employeeData['commission_percentages'] ?? [
               'checkup' => 0,
               'analysis' => 0,
@@ -259,6 +260,7 @@ class EmployeeController extends Controller
         $employee->doctor->update([
           'speciality_id' => $employeeData['speciality_id'],
           'checkup_price' => $employeeData['checkup_price'],
+          'home_checkup_eligible' => $request->boolean('home_checkup_eligible'),
           'commission_percentages' => $employeeData['commission_percentages'],
         ]);
       }

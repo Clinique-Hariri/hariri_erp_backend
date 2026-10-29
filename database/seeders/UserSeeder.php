@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
         $user = User::create([
           'fullname' => ucfirst(str_replace('_', ' ', $role)),
           'email' => strtolower(str_replace('_', '', $role) . '@' . str_replace('_', '', $role) . '.com'),
-          'phone' => '0666666' . rand(100, 999),
+          'phone' => '06666' . rand(10000, 99999),
           'password' => bcrypt(strtolower(str_replace('_', '', $role) . '123')),
           'type' => $type,
           'gender' => Gender::MALE,

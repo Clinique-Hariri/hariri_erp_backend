@@ -23,6 +23,7 @@ class DoctorResource extends JsonResource
       'avatar' => $this->user?->avatar_url,
       'checkup_price' => $this->checkup_price,
       'commission_percentages' => $this->commission_percentages,
+      'home_checkup_eligible' => $this->home_checkup_eligible,
 
       'speciality' => new SpecialityMiniResource($this->whenLoaded('speciality')),
 

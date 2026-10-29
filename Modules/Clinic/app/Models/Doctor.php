@@ -20,12 +20,14 @@ class Doctor extends Model
     'user_id',
     'speciality_id',
     'checkup_price',
-    'commission_percentages'
+    'commission_percentages',
+    'home_checkup_eligible'
   ];
 
   protected $casts = [
     'checkup_price' => 'decimal:2',
     'commission_percentages' => 'array',
+    'home_checkup_eligible' => 'boolean',
   ];
 
   public function user(): BelongsTo
