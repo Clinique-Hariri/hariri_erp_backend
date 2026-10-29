@@ -11,13 +11,13 @@ class StoreHomeCheckupRequest extends FormRequest
   public static function rules(): array
   {
     return [
-      'mobile_request_id' => ['required', 'string', 'max:255', 'unique:home_checkups,mobile_request_id'],
+      'mobile_request_id' => ['nullable', 'string', 'max:255', 'unique:home_checkups,mobile_request_id'],
       'patient_fullname' => ['required', 'string', 'max:255'],
       'patient_phone' => ['nullable', 'string', 'max:255'],
       'patient_birthdate' => ['nullable', 'date'],
       'requested_patient_number' => ['nullable', 'string', 'max:255'],
       'patient_id' => ['nullable', 'exists:patients,id'],
-      'requested_visit_type' => ['required', Rule::in(HomeCheckupVisitType::all())],
+      'requested_visit_type' => ['nullable', Rule::in(HomeCheckupVisitType::all())],
       'visit_type' => ['required', Rule::in(HomeCheckupVisitType::all())],
       'doctor_id' => ['nullable', 'exists:doctors,id'],
       'address' => ['nullable', 'string', 'max:1000'],
@@ -25,7 +25,7 @@ class StoreHomeCheckupRequest extends FormRequest
       'longitude' => ['nullable', 'numeric'],
       'preferred_date' => ['nullable', 'date'],
       'preferred_time' => ['nullable', 'date_format:H:i'],
-      'scheduled_at' => ['nullable', 'date'],
+      'scheduled_at' => ['required', 'date'],
       'base_price' => ['nullable', 'numeric', 'min:0'],
       'services_total' => ['nullable', 'numeric', 'min:0'],
       'total_price' => ['nullable', 'numeric', 'min:0'],
