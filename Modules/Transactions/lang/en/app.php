@@ -18,6 +18,7 @@ return [
   'category_operation' => 'Operation',
   'category_hospitalization' => 'Hospitalization',
   'category_hospitalization_extension' => 'Hospitalization Extension',
+  'category_home_checkup' => 'Home Checkup',
   'category_commission' => 'Commission',
   'category_salary' => 'Salary',
   'category_insurance_coverage' => 'Insurance Coverage',

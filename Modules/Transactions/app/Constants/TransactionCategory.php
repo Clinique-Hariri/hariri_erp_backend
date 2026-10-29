@@ -12,6 +12,7 @@ class TransactionCategory
   const OPERATION                = 'operation';
   const HOSPITALIZATION          = 'hospitalization';
   const HOSPITALIZATION_EXTENSION = 'hospitalization_extension';
+  const HOME_CHECKUP             = 'home_checkup';
   const COMMISSION               = 'commission';
   const SALARY                   = 'salary';
   const INSURANCE_COVERAGE       = 'insurance_coverage';
@@ -26,6 +27,7 @@ class TransactionCategory
       self::OPERATION                => $translated ? __('transactions::app.category_operation')                 : self::OPERATION,
       self::HOSPITALIZATION          => $translated ? __('transactions::app.category_hospitalization')           : self::HOSPITALIZATION,
       self::HOSPITALIZATION_EXTENSION => $translated ? __('transactions::app.category_hospitalization_extension') : self::HOSPITALIZATION_EXTENSION,
+      self::HOME_CHECKUP             => $translated ? __('transactions::app.category_home_checkup')              : self::HOME_CHECKUP,
       self::COMMISSION               => $translated ? __('transactions::app.category_commission')                : self::COMMISSION,
       self::SALARY                   => $translated ? __('transactions::app.category_salary')                    : self::SALARY,
       self::INSURANCE_COVERAGE       => $translated ? __('transactions::app.category_insurance_coverage')        : self::INSURANCE_COVERAGE,
@@ -62,6 +64,7 @@ class TransactionCategory
       self::OPERATION                => 'danger',
       self::HOSPITALIZATION          => 'warning',
       self::HOSPITALIZATION_EXTENSION => 'orange',
+      self::HOME_CHECKUP             => 'primary',
       self::COMMISSION               => 'success',
       self::SALARY                   => 'teal',
       self::INSURANCE_COVERAGE       => 'cyan',

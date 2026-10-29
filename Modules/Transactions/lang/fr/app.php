@@ -18,6 +18,7 @@ return [
   'category_operation' => 'Opération',
   'category_hospitalization' => 'Hospitalisation',
   'category_hospitalization_extension' => "Extension d'hospitalisation",
+  'category_home_checkup' => 'Visite à domicile',
   'category_commission' => 'Commission',
   'category_salary' => 'Salaire',
   'category_insurance_coverage' => "Couverture d'assurance",

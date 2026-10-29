@@ -13,6 +13,7 @@ class ActionType
     const string OPERATION_PAYMENT_ACTION = 'operation_payment_action';
     const string HOSPITALIZATION_PAYMENT_ACTION = 'hospitalization_payment_action';
     const string HOSPITALIZATION_EXTENSION_ACTION = 'hospitalization_extension_action';
+    const string HOME_CHECKUP_PAYMENT_ACTION = 'home_checkup_payment_action';
 
     public static function all(bool $translated = false): array
     {
@@ -24,6 +25,7 @@ class ActionType
             self::OPERATION_PAYMENT_ACTION => $translated ? __('actions::app.operation_payment_action') : self::OPERATION_PAYMENT_ACTION,
             self::HOSPITALIZATION_PAYMENT_ACTION   => $translated ? __('actions::app.hospitalization_payment_action')   : self::HOSPITALIZATION_PAYMENT_ACTION,
             self::HOSPITALIZATION_EXTENSION_ACTION => $translated ? __('actions::app.hospitalization_extension_action') : self::HOSPITALIZATION_EXTENSION_ACTION,
+            self::HOME_CHECKUP_PAYMENT_ACTION      => $translated ? __('actions::app.home_checkup_payment_action')      : self::HOME_CHECKUP_PAYMENT_ACTION,
         ];
     }
 

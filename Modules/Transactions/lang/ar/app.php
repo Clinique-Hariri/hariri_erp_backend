@@ -18,6 +18,7 @@ return [
   'category_operation' => 'عملية',
   'category_hospitalization' => 'إقامة',
   'category_hospitalization_extension' => 'تمديد إقامة',
+  'category_home_checkup' => 'زيارة منزلية',
   'category_commission' => 'عمولة',
   'category_salary' => 'راتب',
   'category_insurance_coverage' => 'تغطية تأمينية',

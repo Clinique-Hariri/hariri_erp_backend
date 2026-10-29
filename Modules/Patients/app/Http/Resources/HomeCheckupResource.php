@@ -4,6 +4,7 @@ namespace Modules\Patients\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\Actions\Http\Resources\ActionResource;
 use Modules\Clinic\Http\Resources\DoctorResource;
 use Modules\HRM\Http\Resources\EmployeeMiniResource;
 use Modules\Patients\Constants\HomeCheckupStatus;
@@ -52,6 +53,7 @@ class HomeCheckupResource extends JsonResource
 
       'services' => HomeCheckupServiceResource::collection($this->whenLoaded('services')),
       'nurses' => EmployeeMiniResource::collection($this->whenLoaded('nurses')),
+      'payment_action' => new ActionResource($this->whenLoaded('paymentAction')),
 
       'created_at' => $this->created_at,
       'updated_at' => $this->updated_at,

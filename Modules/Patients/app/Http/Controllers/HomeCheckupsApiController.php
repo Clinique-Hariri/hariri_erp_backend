@@ -12,6 +12,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Modules\Actions\Constants\ActionType;
 use Modules\Clinic\Models\Doctor;
 use Modules\HRM\Models\Employee;
 use Modules\Patients\Constants\CheckupStatus;
@@ -27,6 +28,9 @@ use Modules\Patients\Models\HomeCheckup;
 use Modules\Patients\Models\Patient;
 use Modules\Settings\Constants\SettingsKeys;
 use Modules\Settings\Models\Setting;
+use Modules\Transactions\Constants\Status;
+use Modules\Transactions\Constants\TransactionCategory;
+use Modules\Transactions\Constants\Type;
 use Throwable;
 
 class HomeCheckupsApiController extends Controller
@@ -357,9 +361,33 @@ class HomeCheckupsApiController extends Controller
 
       $model = HomeCheckup::with(['doctor.user.employee', 'patient'])->findOrFail($id);
 
-      $model->update(['status' => $newStatus]);
+      DB::transaction(function () use ($model, $newStatus) {
+        $model->update(['status' => $newStatus]);
 
-      $model->refresh()->load(['patient', 'doctor.user.employee', 'services', 'nurses', 'checkup']);
+        if ($newStatus === HomeCheckupStatus::COMPLETED) {
+          $model->actions()->create([
+            'action_type' => ActionType::HOME_CHECKUP_PAYMENT_ACTION,
+            'from_status' => HomeCheckupStatus::IN_PROGRESS,
+            'to_status'   => HomeCheckupStatus::COMPLETED,
+            'user_id'     => auth()->id(),
+          ]);
+
+          if ($model->total_price > 0) {
+            $model->transactions()->create([
+              'amount'   => $model->total_price,
+              'details'  => "Home checkup payment for #{$model->home_checkup_number} (Patient: {$model->patient->fullname})",
+              'type'     => Type::CREDIT,
+              'status'   => Status::COMPLETED,
+              'category' => TransactionCategory::HOME_CHECKUP,
+              'user_id'  => auth()->id(),
+              'accountable_type' => $model->patient::class,
+              'accountable_id' => $model->patient->id,
+            ]);
+          }
+        }
+      });
+
+      $model->refresh()->load(['patient', 'doctor.user.employee', 'services', 'nurses', 'checkup', 'paymentAction.user']);
 
       return $this->successResponse(
         data: new HomeCheckupResource($model)

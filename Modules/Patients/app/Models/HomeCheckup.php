@@ -7,7 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Actions\Constants\ActionType;
+use Modules\Actions\Models\Action;
 use Modules\Clinic\Models\Doctor;
 use Modules\HRM\Models\Employee;
 use Modules\Transactions\Models\Transaction;
@@ -83,7 +86,19 @@ class HomeCheckup extends Model
 
   public function transactions(): MorphMany
   {
-    return $this->morphMany(Transaction::class, 'accountable');
+    return $this->morphMany(Transaction::class, 'transactionable');
+  }
+
+  public function actions(): MorphMany
+  {
+    return $this->morphMany(Action::class, 'actionable');
+  }
+
+  public function paymentAction(): MorphOne
+  {
+    return $this->morphOne(Action::class, 'actionable')
+      ->where('action_type', ActionType::HOME_CHECKUP_PAYMENT_ACTION)
+      ->latest();
   }
 
   protected static function boot()
