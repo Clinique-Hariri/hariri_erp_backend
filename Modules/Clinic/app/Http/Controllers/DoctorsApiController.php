@@ -49,6 +49,10 @@ class DoctorsApiController extends Controller
         $model->where('speciality_id', $request->speciality_id);
       }
 
+      if ($request->filled('home_checkup_eligible')) {
+        $model->where('home_checkup_eligible', $request->boolean('home_checkup_eligible'));
+      }
+
       $allowedSorts = ['id', 'created_at', 'speciality_id'];
 
       $model->when(
