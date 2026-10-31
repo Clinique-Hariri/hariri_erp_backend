@@ -7,6 +7,7 @@ use App\Support\Enum\PermissionNames;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Modules\Clinic\Http\Requests\UpdateDoctorRequest;
 use Modules\Clinic\Http\Resources\DoctorResource;
 use Modules\Clinic\Models\Doctor;
 use Modules\Patients\Constants\CheckupStatus;
@@ -94,18 +95,17 @@ class DoctorsApiController extends Controller
   {
     $this->authorizePermission(PermissionNames::DOCTORS_UPDATE);
 
-    $data = $this->validateRequest($request, [
-      'speciality_id' => ['required', 'exists:specialities,id'],
-      'checkup_price' => ['required', 'numeric', 'min:0'],
-      'commission_percentages' => ['required', 'array'],
-      'commission_percentages.checkup' => ['required', 'numeric', 'min:0', 'max:100'],
-      'commission_percentages.analysis' => ['required', 'numeric', 'min:0', 'max:100'],
-      'commission_percentages.hospitalization' => ['required', 'numeric', 'min:0', 'max:100'],
-      'home_checkup_eligible' => ['nullable', 'boolean'],
-    ]);
+    $data = $this->validateRequest($request, UpdateDoctorRequest::rules());
 
     if ($request->filled('home_checkup_eligible')) {
       $data['home_checkup_eligible'] = $request->boolean('home_checkup_eligible');
+    }
+
+    if ($request->filled('commission_percentages')) {
+      $data['commission_percentages'] = array_merge(
+        $doctor->commission_percentages ?? [],
+        $data['commission_percentages']
+      );
     }
 
     try {
