@@ -14,7 +14,13 @@ return new class extends Migration {
 
       $table->string('patient_fullname')->nullable()->change();
 
-      $table->dropForeign(['patient_id']);
+      $patientForeignKey = collect(Schema::getForeignKeys('home_checkups'))
+        ->first(fn (array $foreignKey) => in_array('patient_id', $foreignKey['columns'] ?? [], true));
+
+      if ($patientForeignKey) {
+        $table->dropForeign($patientForeignKey['name']);
+      }
+
       $table->unsignedBigInteger('patient_id')->nullable(false)->change();
       $table->foreign('patient_id')->references('id')->on('patients')->cascadeOnDelete();
     });
@@ -26,7 +32,13 @@ return new class extends Migration {
       $table->renameColumn('patient_number', 'requested_patient_number');
       $table->string('patient_fullname')->nullable(false)->change();
 
-      $table->dropForeign(['patient_id']);
+      $patientForeignKey = collect(Schema::getForeignKeys('home_checkups'))
+        ->first(fn (array $foreignKey) => in_array('patient_id', $foreignKey['columns'] ?? [], true));
+
+      if ($patientForeignKey) {
+        $table->dropForeign($patientForeignKey['name']);
+      }
+
       $table->unsignedBigInteger('patient_id')->nullable()->change();
       $table->foreign('patient_id')->references('id')->on('patients')->nullOnDelete();
     });
