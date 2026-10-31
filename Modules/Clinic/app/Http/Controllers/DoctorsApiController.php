@@ -90,6 +90,36 @@ class DoctorsApiController extends Controller
     }
   }
 
+  public function update(Request $request, Doctor $doctor)
+  {
+    $this->authorizePermission(PermissionNames::DOCTORS_UPDATE);
+
+    $data = $this->validateRequest($request, [
+      'speciality_id' => ['required', 'exists:specialities,id'],
+      'checkup_price' => ['required', 'numeric', 'min:0'],
+      'commission_percentages' => ['required', 'array'],
+      'commission_percentages.checkup' => ['required', 'numeric', 'min:0', 'max:100'],
+      'commission_percentages.analysis' => ['required', 'numeric', 'min:0', 'max:100'],
+      'commission_percentages.hospitalization' => ['required', 'numeric', 'min:0', 'max:100'],
+      'home_checkup_eligible' => ['nullable', 'boolean'],
+    ]);
+
+    if ($request->filled('home_checkup_eligible')) {
+      $data['home_checkup_eligible'] = $request->boolean('home_checkup_eligible');
+    }
+
+    try {
+      $doctor->update($data);
+      $doctor->load(['user.employee', 'speciality']);
+
+      return $this->successResponse(
+        data: new DoctorResource($doctor)
+      );
+    } catch (Throwable $e) {
+      return $this->errorResponse($e->getMessage(), 500);
+    }
+  }
+
   public function nextCheckup($doctorId)
   {
     $this->authorizePermission(PermissionNames::CHECKUPS_VIEW);

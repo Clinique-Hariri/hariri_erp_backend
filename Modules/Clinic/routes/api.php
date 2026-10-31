@@ -15,7 +15,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'auth:sanctum'], function () {
 
   Route::apiResource('specialities', SpecialitiesApiController::class);
   Route::get('doctors/statistics', [DoctorsApiController::class, 'statistics'])->name('doctors.statistics');
-  Route::apiResource('doctors', DoctorsApiController::class)->only(['index', 'show']);
+  Route::apiResource('doctors', DoctorsApiController::class)->only(['index', 'show', 'update']);
   Route::group(['prefix' => 'doctors/{doctorId}'], function () {
     Route::get('checkup-stats', [DoctorsApiController::class, 'checkupStats'])->name('doctors.checkup-stats');
     Route::apiResource('schedules', SchedulesController::class)->except(['update']);
