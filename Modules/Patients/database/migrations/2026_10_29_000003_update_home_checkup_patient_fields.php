@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -13,7 +14,11 @@ return new class extends Migration {
       }
 
       $table->string('patient_fullname')->nullable()->change();
+    });
 
+    DB::table('home_checkups')->whereNull('patient_id')->delete();
+
+    Schema::table('home_checkups', function (Blueprint $table) {
       $patientForeignKey = collect(Schema::getForeignKeys('home_checkups'))
         ->first(fn (array $foreignKey) => in_array('patient_id', $foreignKey['columns'] ?? [], true));
 
