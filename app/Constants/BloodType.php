@@ -27,6 +27,7 @@ class BloodType
       self::AB_NEGATIVE => $translated ? __('app.blood_types.ab_negative') : self::AB_NEGATIVE,
       self::O_POSITIVE => $translated ? __('app.blood_types.o_positive') : self::O_POSITIVE,
       self::O_NEGATIVE => $translated ? __('app.blood_types.o_negative') : self::O_NEGATIVE,
+      self::NOT_SPECIFIED => $translated ? __('app.blood_types.not_specified') : self::NOT_SPECIFIED,
     ];
   }
 
@@ -41,6 +42,7 @@ class BloodType
       self::AB_NEGATIVE => 'success',
       self::O_POSITIVE => 'warning',
       self::O_NEGATIVE => 'warning',
+      self::NOT_SPECIFIED => 'secondary',
     ];
   }
 
@@ -56,12 +58,12 @@ class BloodType
 
   public static function get_name(string|null $value): string
   {
-    return $value ? self::all(true)[$value] : __('app.blood_types.not_specified');
+    return self::all(true)[$value];
   }
 
   public static function get_color(string|null $value): string
   {
-    return $value ? self::colors()[$value] : 'secondary';
+    return self::colors()[$value];
   }
 
   public static function get_resource(string|null $value):array
