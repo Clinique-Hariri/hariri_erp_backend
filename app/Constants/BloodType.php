@@ -58,11 +58,13 @@ class BloodType
 
   public static function get_name(string|null $value): string
   {
+    $value = $value ?? self::NOT_SPECIFIED;
     return self::all(true)[$value];
   }
 
   public static function get_color(string|null $value): string
   {
+    $value = $value ?? self::NOT_SPECIFIED;
     return self::colors()[$value];
   }
 

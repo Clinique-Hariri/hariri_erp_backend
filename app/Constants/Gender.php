@@ -38,15 +38,17 @@ class Gender
         return self::collection()->get($gender);
     }
 
-    public static function get_name(string $gender):string
-    {
-        return self::all(true)[$gender];
-    }
+  public static function get_name(string|null $value): string
+  {
+    $value = $value ?? self::NOT_SPECIFIED;
+    return self::all(true)[$value];
+  }
 
-    public static function get_color(string $gender):string
-    {
-        return self::colors()[$gender];
-    }
+  public static function get_color(string|null $value): string
+  {
+    $value = $value ?? self::NOT_SPECIFIED;
+    return self::colors()[$value];
+  }
 
     public static function default():string
     {
