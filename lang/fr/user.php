@@ -44,7 +44,7 @@ return [
     'accountant' => 'Comptable',
     'human_resources' => 'Ressources Humaines',
     'inventory_manager' => 'Responsable des Stocks',
-    'nurse' => 'Infirmier de visite à domicile',
+    'nurse_home_checkup' => 'Infirmier de visite à domicile',
   ],
 
   'types' => [

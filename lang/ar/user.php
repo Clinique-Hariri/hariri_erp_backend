@@ -43,7 +43,7 @@ return [
     'accountant' => 'محاسب',
     'human_resources' => 'الموارد البشرية',
     'inventory_manager' => 'مدير المخزن',
-    'nurse' => 'ممرض الفحص المنزلي',
+    'nurse_home_checkup' => 'ممرض الفحص المنزلي',
   ],
 
   'types' => [

@@ -44,7 +44,7 @@ return [
     'accountant' => 'Accountant',
     'human_resources' => 'Human Resources',
     'inventory_manager' => 'Inventory Manager',
-    'nurse' => 'Home Checkup Nurse',
+    'nurse_home_checkup' => 'Home Checkup Nurse',
   ],
 
     'types' => [

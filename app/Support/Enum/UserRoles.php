@@ -13,7 +13,7 @@ class UserRoles
   const HUMAN_RESOURCES = 'human_resources';
   const INVENTORY_MANAGER = 'inventory_manager';
   const INSURANCE_SOCIETY_MANAGER = 'insurance_society_manager';
-  const NURSE = 'nurse';
+  const NURSE_HOME_CHECKUP = 'nurse_home_checkup';
 
   public static function all($translated = false):array
   {
@@ -29,7 +29,7 @@ class UserRoles
       self::HUMAN_RESOURCES => $translated ? __('user.roles.human_resources') : self::HUMAN_RESOURCES,
       self::INVENTORY_MANAGER => $translated ? __('user.roles.inventory_manager') : self::INVENTORY_MANAGER,
       self::INSURANCE_SOCIETY_MANAGER => $translated ? __('user.roles.insurance_society_manager') : self::INSURANCE_SOCIETY_MANAGER,
-      self::NURSE => $translated ? __('user.roles.nurse') : self::NURSE,
+      self::NURSE_HOME_CHECKUP => $translated ? __('user.roles.nurse_home_checkup') : self::NURSE_HOME_CHECKUP,
     ];
   }
 

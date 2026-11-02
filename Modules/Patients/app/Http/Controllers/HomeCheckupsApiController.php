@@ -450,7 +450,7 @@ class HomeCheckupsApiController extends Controller
   }
 
   /**
-   * List employees that hold the "nurse" role, for nurse assignment.
+   * List employees that hold the "nurse_home_checkup" role, for nurse assignment.
    */
   public function availableNurses(Request $request)
   {
@@ -458,7 +458,7 @@ class HomeCheckupsApiController extends Controller
 
     try {
       $nurses = Employee::whereHas('user', function ($query) {
-        $query->role(UserRoles::NURSE);
+        $query->role(UserRoles::NURSE_HOME_CHECKUP);
       })->get();
 
       return $this->successResponse(
